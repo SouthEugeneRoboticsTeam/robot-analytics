@@ -1,12 +1,9 @@
+import { Team } from './team'
+
 export interface Scout {
     name: String,
     team: Team,
     sections: Array<ScoutSection>
-}
-
-export interface Team {
-    name: String,
-    number: Number
 }
 
 export interface ScoutSection {
