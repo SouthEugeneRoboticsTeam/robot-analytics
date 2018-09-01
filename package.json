@@ -1,0 +1,35 @@
+{
+  "private": true,
+  "name": "robot-analytics",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "if-env NODE_ENV=production && npm run -s serve || npm run -s dev",
+    "build": "webpack",
+    "serve": "",
+    "dev": "webpack-dev-server"
+  },
+  "devDependencies": {
+    "css-loader": "^1.0.0",
+    "if-env": "^1.0.4",
+    "node-sass": "^4.9.2",
+    "sass-loader": "^7.0.3",
+    "source-map-loader": "^0.2.3",
+    "style-loader": "^0.21.0",
+    "ts-loader": "^4.4.2",
+    "typescript": "^2.9.2",
+    "webpack": "^4.16.3",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.5"
+  },
+  "dependencies": {
+    "preact": "^8.2.1",
+    "preact-material-components": "^1.4.6",
+    "preact-redux": "^2.0.3",
+    "preact-router": "^2.5.5",
+    "redux": "^4.0.0",
+    "typesafe-actions": "^2.0.4",
+    "utility-types": "^2.0.0",
+    "yarn": "^1.9.4"
+  }
+}
