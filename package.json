@@ -23,6 +23,7 @@
     "webpack-dev-server": "^3.1.5"
   },
   "dependencies": {
+    "firebase": "^5.4.2",
     "preact": "^8.2.1",
     "preact-material-components": "^1.4.6",
     "preact-redux": "^2.0.3",
