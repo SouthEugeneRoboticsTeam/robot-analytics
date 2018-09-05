@@ -18,9 +18,10 @@
     "style-loader": "^0.21.0",
     "ts-loader": "^4.4.2",
     "typescript": "^2.9.2",
-    "webpack": "^4.16.3",
+    "webpack": "^4.17.2",
     "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.5"
+    "webpack-dev-server": "^3.1.5",
+    "yarn": "^1.9.4"
   },
   "dependencies": {
     "firebase": "^5.4.2",
@@ -30,7 +31,6 @@
     "preact-router": "^2.5.5",
     "redux": "^4.0.0",
     "typesafe-actions": "^2.0.4",
-    "utility-types": "^2.0.0",
-    "yarn": "^1.9.4"
+    "utility-types": "^2.0.0"
   }
 }
