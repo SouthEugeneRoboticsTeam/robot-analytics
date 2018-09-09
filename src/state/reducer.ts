@@ -1,9 +1,10 @@
 import { combineReducers } from 'redux';
 import { ActionType } from 'typesafe-actions';
 import { Team } from '../files/team';
-import { ActionTypes } from './actions';
+import { ActionTypes, HomeActionTypes } from './actions';
 import * as actions from './actions';
 import { Scout } from '../files/scout';
+import { defaultHomeState, HomeState } from "./state";
 
 const teams = (state: Array<Team> = [], action: ActionType<typeof actions>) => {
     switch (action.type) {
@@ -23,4 +24,16 @@ const scouts = (state: Array<Scout> = [], action: ActionType<typeof actions>) =>
     }
 };
 
-export const reducer = combineReducers({ teams, scouts });
+const home = (state: HomeState = defaultHomeState, action: ActionType<typeof actions>) => {
+    switch (action.type) {
+        case HomeActionTypes.SET_DRAWER_OPENED: {
+            return {
+                ...state,
+                drawerOpened: action.payload
+            }
+        }
+        default: return state
+    }
+};
+
+export const reducer = combineReducers({ teams, scouts, home });

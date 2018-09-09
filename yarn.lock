@@ -3797,7 +3797,7 @@ postcss@^6.0.1, postcss@^6.0.23:
     source-map "^0.6.1"
     supports-color "^5.4.0"
 
-preact-material-components@^1.4.6:
+preact-material-components@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/preact-material-components/-/preact-material-components-1.5.1.tgz#a5b452bdde83d0a4444c078cb50c328766c63669"
   dependencies:

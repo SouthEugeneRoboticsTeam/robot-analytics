@@ -26,7 +26,7 @@
   "dependencies": {
     "firebase": "^5.4.2",
     "preact": "^8.2.1",
-    "preact-material-components": "^1.4.6",
+    "preact-material-components": "^1.5.1",
     "preact-redux": "^2.0.3",
     "preact-router": "^2.5.5",
     "redux": "^4.0.0",

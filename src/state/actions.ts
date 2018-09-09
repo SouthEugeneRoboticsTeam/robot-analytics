@@ -6,5 +6,11 @@ export const enum ActionTypes {
     ADD_SCOUT = 'ADD_SCOUT'
 }
 
+export enum HomeActionTypes {
+    SET_DRAWER_OPENED = 'SET_DRAWER_OPENED'
+}
+
 export const addTeam = (name: String, number: Number) => action(ActionTypes.ADD_TEAM, { name, number });
 export const addScout = (scout: Scout) => action(ActionTypes.ADD_SCOUT, scout);
+
+export const setDrawerOpened = (value: Boolean) => action(HomeActionTypes.SET_DRAWER_OPENED, value);

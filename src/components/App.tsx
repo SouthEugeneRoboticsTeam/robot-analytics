@@ -1,11 +1,11 @@
 import { h } from 'preact';
 import { Router } from 'preact-router';
-import { Home } from '../routes/Home';
+import { HomeContainer } from "../containers/HomeContainer";
 
 export const App = () => (
     <div id="App">
         <Router>
-            <Home path="/" />
+            <HomeContainer path="/" />
         </Router>
     </div>
 );
