@@ -1,11 +1,18 @@
-import { h, render } from 'preact';
-import { Provider } from 'preact-redux';
+import * as React from 'react';
+import { render } from 'react-dom'
+import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
 import { App } from './components/App';
 import { store } from './state/store';
-import 'preact-material-components/style.css'
 import './firebase';
-import './style.scss'
+import './style.scss';
 
-const Root = () => <div id="root"><Provider store={store}><App /></Provider></div>;
+const Root = () => (
+    <BrowserRouter>
+        <Provider store={store}>
+            <App />
+        </Provider>
+    </BrowserRouter>
+);
 
-render(<Root />, document.body, document.getElementById("root"));
+render(<Root />, document.getElementById('root'));

@@ -1,11 +1,13 @@
-import { h } from 'preact';
-import { Router } from 'preact-router';
+import * as React from 'react';
+import { Switch, Route } from 'react-router';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import { HomeContainer } from "../containers/HomeContainer";
 
 export const App = () => (
-    <div id="App">
-        <Router>
-            <HomeContainer path="/" />
-        </Router>
-    </div>
+    <>
+        <CssBaseline />
+        <Switch>
+            <Route exact path="/" component={HomeContainer} />
+        </Switch>
+    </>
 );
