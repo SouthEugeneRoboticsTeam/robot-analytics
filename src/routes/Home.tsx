@@ -1,8 +1,11 @@
 import * as React from 'react';
-import Typography from '@material-ui/core/Typography';
+import Drawer from '@material-ui/core/Drawer';
+import { TeamListContainer } from "../containers/TeamListContainer";
 
 export const Home = () => (
     <>
-        <Typography variant="display1">Robot Analytics</Typography>
+        <Drawer variant="permanent" >
+            <TeamListContainer />
+        </Drawer>
     </>
 );
