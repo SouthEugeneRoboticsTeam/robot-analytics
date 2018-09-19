@@ -15,7 +15,7 @@ const styles = createStyles({
 export const TeamList = withStyles(styles)((props: TeamListProps) => (
     <List className={props.classes.root}>
         {...props.teams.map(team => (
-            <ListItem button>
+             <ListItem button key={`${team.name}_${team.number}`}>
                 <ListItemText primary={team.name} secondary={team.number}/>
             </ListItem>
         ))}
