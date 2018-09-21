@@ -5,6 +5,7 @@ import { Scout } from '../files/scout';
 export type AppState = DeepReadonly<{
     teams: Array<Team>
     scouts: Array<Scout>
+    scoutTemplates: Array<Scout>
     home: HomeState
 }>
 

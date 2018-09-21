@@ -24,6 +24,15 @@ const scouts = (state: Array<Scout> = [], action: ActionType<typeof actions>) =>
     }
 };
 
+const scoutTemplate = (state: Array<Scout> = [], action: ActionType<typeof actions>) => {
+    switch (action.type) {
+        case ActionTypes.ADD_SCOUT_TEMPLATE: {
+            return [...state, action.payload]
+        }
+        default: return state
+    }
+};
+
 const home = (state: HomeState = defaultHomeState, action: ActionType<typeof actions>) => {
     switch (action.type) {
         case HomeActionTypes.SET_DRAWER_OPENED: {
@@ -36,4 +45,4 @@ const home = (state: HomeState = defaultHomeState, action: ActionType<typeof act
     }
 };
 
-export const reducer = combineReducers({ teams, scouts, home });
+export const reducer = combineReducers({ teams, scouts, scoutTemplate, home });
