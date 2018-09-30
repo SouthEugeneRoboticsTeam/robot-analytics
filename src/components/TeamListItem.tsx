@@ -40,7 +40,7 @@ export const TeamListItem = withStyles(styles)(
                         ? <Collapse in={open}>
                             <List style={{ padding: 0 }}>
                                 {...scouts.map((scout) => (
-                                    <ListItem button className={classes.nested}>
+                                    <ListItem button className={classes.nested} key={scout.name}>
                                         <ListItemText primary={scout.name}/>
                                     </ListItem>
                                 ))}

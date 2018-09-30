@@ -20,6 +20,7 @@ export class TeamList extends React.Component<TeamListProps> {
                 {...teams.map(team => <TeamListItem
                     team={team}
                     scouts={scouts.filter((scout) => scout.team.name === team.name)}
+                    key={`${team.number}_${team.name}`}
                 />)}
             </List>
         );
