@@ -1,12 +1,14 @@
 import { connect } from 'react-redux';
-import { AppState } from "../state/state";
-import { TeamList } from "../components/TeamList";
+import { AppState } from '../state/state';
+import { TeamList, styles } from '../components/TeamList';
+import { compose } from 'redux';
+import withStyles from '@material-ui/core/styles/withStyles';
 
-export const TeamListContainer = connect(
-    (state: AppState) => ({
-        teams: state.teams
-    }),
-    (dispatch) => ({
-        classes: null
-    })
+export const TeamListContainer = compose(
+    withStyles(styles),
+    connect(
+        (state: AppState) => ({
+            teams: state.teams
+        })
+    )
 )(TeamList);
