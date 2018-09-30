@@ -5,7 +5,6 @@ import { Provider } from 'react-redux';
 import { App } from './components/App';
 import { store } from './state/store';
 import './firebase';
-import './style.scss';
 import { addScout, addTeam } from './state/actions';
 
 //test
