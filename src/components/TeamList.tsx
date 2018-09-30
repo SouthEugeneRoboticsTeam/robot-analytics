@@ -1,10 +1,10 @@
 import * as React from 'react';
 import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import { TeamListItem } from './TeamListItem';
 import { WithStyles } from '@material-ui/core/styles/withStyles';
 import createStyles from '@material-ui/core/styles/createStyles';
 import { Team } from "../files/team";
+import { Scout } from '../files/scout';
 
 export const styles = createStyles({
     root: {
@@ -14,14 +14,13 @@ export const styles = createStyles({
 
 export class TeamList extends React.Component<TeamListProps> {
     render() {
-        const { classes, teams } = this.props;
+        const { classes, teams, scouts } = this.props;
         return (
             <List className={classes.root}>
-                {...teams.map(team => (
-                    <ListItem button key={`${team.name}_${team.number}`}>
-                        <ListItemText primary={team.name} secondary={team.number}/>
-                    </ListItem>
-                ))}
+                {...teams.map(team => <TeamListItem
+                    team={team}
+                    scouts={scouts.filter((scout) => scout.team.name === team.name)}
+                />)}
             </List>
         );
     }
@@ -29,4 +28,5 @@ export class TeamList extends React.Component<TeamListProps> {
 
 export interface TeamListProps extends WithStyles<typeof styles> {
     teams: Array<Team>
+    scouts: Array<Scout>
 }

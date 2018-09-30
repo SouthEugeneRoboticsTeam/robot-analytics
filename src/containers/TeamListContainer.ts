@@ -8,7 +8,8 @@ export const TeamListContainer = compose(
     withStyles(styles),
     connect(
         (state: AppState) => ({
-            teams: state.teams
+            teams: state.teams,
+            scouts: state.scouts
         })
     )
 )(TeamList);

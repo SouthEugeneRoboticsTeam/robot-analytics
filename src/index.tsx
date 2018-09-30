@@ -6,11 +6,17 @@ import { App } from './components/App';
 import { store } from './state/store';
 import './firebase';
 import './style.scss';
-import { addTeam } from "./state/actions";
+import { addScout, addTeam } from './state/actions';
 
 //test
 store.dispatch(addTeam('Sert', 2521));
 store.dispatch(addTeam('ChezyPoofs', 254));
+store.dispatch(addScout({
+    name: 'Helo',
+    templateName: 'Hai',
+    team: store.getState().teams[0],
+    sections: []
+}));
 
 const Root = () => (
     <BrowserRouter>
