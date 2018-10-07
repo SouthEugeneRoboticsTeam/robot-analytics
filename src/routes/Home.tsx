@@ -5,12 +5,17 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography';
 import Drawer from '@material-ui/core/Drawer';
 import Divider from '@material-ui/core/Divider';
+import List from '@material-ui/core/List';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import TableChartIcon from '@material-ui/icons/TableChart';
+import { TableView } from './TableView';
+import { Switch, Route } from 'react-router-dom'
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles'
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
+import { NavigationItem } from '../components/NavigationItem';
 
 const drawerWidth = 240;
 
@@ -50,6 +55,9 @@ const styles = (theme: Theme) => createStyles({
     menuButtonHidden: {
         display: 'none',
     },
+    drawer: {
+        height: '100vh'
+    },
     drawerPaper: {
         position: 'relative',
         whiteSpace: 'nowrap',
@@ -69,7 +77,14 @@ const styles = (theme: Theme) => createStyles({
         [theme.breakpoints.up('sm')]: {
             width: theme.spacing.unit * 9,
         },
-    }
+    },
+    content: {
+        flexGrow: 1,
+        padding: theme.spacing.unit * 3,
+        height: '100vh',
+        overflow: 'auto',
+    },
+    appBarSpacer: theme.mixins.toolbar,
 });
 
 export const Home = withStyles(styles)(
@@ -88,7 +103,8 @@ export const Home = withStyles(styles)(
             return (
                 <div className={classes.root}>
                     <Drawer
-                        variant="persistent"
+                        variant="permanent"
+                        className={classes.drawer}
                         classes={{
                             paper: classNames(classes.drawerPaper, !drawerOpened && classes.drawerPaperClose)
                         }}
@@ -100,6 +116,9 @@ export const Home = withStyles(styles)(
                             </IconButton>
                         </div>
                         <Divider />
+                        <List>
+                            <NavigationItem icon={TableChartIcon} text="Table View" linkTo="table-view"/>
+                        </List>
                     </Drawer>
                     <AppBar className={classNames(classes.appBar, drawerOpened && classes.appBarShift)}>
                         <Toolbar disableGutters={!drawerOpened} className={classes.toolbar}>
@@ -122,6 +141,13 @@ export const Home = withStyles(styles)(
                             </Typography>
                         </Toolbar>
                     </AppBar>
+                    <main className={classes.content}>
+                        <div className={classes.appBarSpacer} />
+                        <Switch>
+                            <Route exact path="/" component={null}/>
+                            <Route path="/table-view" component={TableView}/>
+                        </Switch>
+                    </main>
                 </div>
             )
         }
