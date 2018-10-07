@@ -62,6 +62,7 @@ const styles = (theme: Theme) => createStyles({
         position: 'relative',
         whiteSpace: 'nowrap',
         width: drawerWidth,
+        overflow: 'hidden',
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
@@ -74,6 +75,7 @@ const styles = (theme: Theme) => createStyles({
             duration: theme.transitions.duration.leavingScreen,
         }),
         width: theme.spacing.unit * 7,
+        overflow: 'hidden',
         [theme.breakpoints.up('sm')]: {
             width: theme.spacing.unit * 9,
         },
