@@ -10,6 +10,7 @@
     "dev": "webpack-dev-server"
   },
   "devDependencies": {
+    "copy-webpack-plugin": "^4.5.2",
     "css-loader": "^1.0.0",
     "if-env": "^1.0.4",
     "node-sass": "^4.9.2",

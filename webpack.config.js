@@ -1,4 +1,5 @@
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: './src/index.tsx',
@@ -23,5 +24,10 @@ module.exports = {
             { test: /\.css$/, use: ['style-loader', 'css-loader'] },
             { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
         ]
-    }
+    },
+    plugins: [
+        new CopyWebpackPlugin([
+            { from: 'public/index.html', to: 'index.html' }
+        ])
+    ]
 };
