@@ -1,35 +1,38 @@
 import { combineReducers } from 'redux';
 import { ActionType } from 'typesafe-actions';
-import { Team } from '../files/team';
+import { Teams } from '../data/team';
+import { Games } from '../data/game';
 import { ActionTypes } from './actions';
 import * as actions from './actions';
-import { Scout } from '../files/scout';
 
-const teams = (state: Array<Team> = [], action: ActionType<typeof actions>) => {
+const teams = (state: Teams = {}, action: ActionType<typeof actions>) => {
     switch (action.type) {
         case ActionTypes.ADD_TEAM: {
-            return [...state, action.payload]
+            return { ...state, [action.payload.name]: { number: action.payload.number, scouts: action.payload.scouts }}
+        }
+        case ActionTypes.ADD_SCOUT: {
+            return {
+                ...state,
+                [action.payload.teamName]: {
+                    ...state[action.payload.teamName],
+                    scouts: {
+                        ...state[action.payload.teamName].scouts,
+                        [action.payload.scoutName]: action.payload.scout
+                    }
+                }
+            }
         }
         default: return state;
     }
 };
 
-const scouts = (state: Array<Scout> = [], action: ActionType<typeof actions>) => {
+const games = (state: Games = {}, action: ActionType<typeof actions>) => {
     switch (action.type) {
-        case ActionTypes.ADD_SCOUT: {
-            return [...state, action.payload]
+        case ActionTypes.ADD_GAME: {
+            return { ...state, [action.payload.name]: { metrics: action.payload.metrics } }
         }
         default: return state
     }
 };
 
-const scoutTemplate = (state: Array<Scout> = [], action: ActionType<typeof actions>) => {
-    switch (action.type) {
-        case ActionTypes.ADD_SCOUT_TEMPLATE: {
-            return [...state, action.payload]
-        }
-        default: return state
-    }
-};
-
-export const reducer = combineReducers({ teams, scouts, scoutTemplate });
+export const reducer = combineReducers({ teams, games });

@@ -1,12 +1,13 @@
 import { action } from 'typesafe-actions';
-import { Scout } from '../files/scout';
+import { Scout, Scouts } from '../data/scout';
+import { Metrics } from '../data/metric';
 
 export const enum ActionTypes {
     ADD_TEAM = 'ADD_TEAM',
     ADD_SCOUT = 'ADD_SCOUT',
-    ADD_SCOUT_TEMPLATE = 'ADD_SCOUT_TEMPLATE'
+    ADD_GAME = 'ADD_GAME'
 }
 
-export const addTeam = (name: String, number: Number) => action(ActionTypes.ADD_TEAM, { name, number });
-export const addScout = (scout: Scout) => action(ActionTypes.ADD_SCOUT, scout);
-export const addScoutTemplate = (template: Scout) => action(ActionTypes.ADD_SCOUT_TEMPLATE, template);
+export const addTeam = (name: string, number: number, scouts: Scouts = {}) => action(ActionTypes.ADD_TEAM, { name, number, scouts });
+export const addScout = (teamName: string, scoutName: string, scout: Scout) => action(ActionTypes.ADD_SCOUT, { teamName, scoutName, scout });
+export const addGame = (name: string, metrics: Metrics) => action(ActionTypes.ADD_GAME, { name, metrics });

@@ -1,9 +1,8 @@
 import { DeepReadonly } from 'utility-types';
-import { Team } from '../files/team';
-import { Scout } from '../files/scout';
+import { Teams } from '../data/team';
+import { Games } from '../data/game';
 
 export type AppState = DeepReadonly<{
-    teams: Array<Team>
-    scouts: Array<Scout>
-    scoutTemplates: Array<Scout>
+    teams: Teams
+    games: Games
 }>
