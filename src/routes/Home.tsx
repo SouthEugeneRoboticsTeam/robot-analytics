@@ -8,6 +8,8 @@ import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import SettingsIcon from '@material-ui/icons/Settings';
+import AccoutCircleIcon from '@material-ui/icons/AccountCircle';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import TableChartIcon from '@material-ui/icons/TableChart';
 import { TableView } from './TableView';
@@ -22,6 +24,9 @@ const drawerWidth = 240;
 const styles = (theme: Theme) => createStyles({
     root: {
         display: 'flex'
+    },
+    title: {
+        flexGrow: 1,
     },
     toolbar: {
         paddingRight: 24, // keep right padding when drawer closed
@@ -138,9 +143,18 @@ export const Home = withStyles(styles)(
                             <Typography
                                 variant="title"
                                 color="inherit"
+                                component="h1"
+                                noWrap
+                                className={classes.title}
                             >
                                 Robot Analytics
                             </Typography>
+                            <IconButton color="inherit">
+                                <SettingsIcon />
+                            </IconButton>
+                            <IconButton color="inherit">
+                                <AccoutCircleIcon />
+                            </IconButton>
                         </Toolbar>
                     </AppBar>
                     <main className={classes.content}>
