@@ -5,8 +5,7 @@ export interface Scouts {
 }
 
 export interface Scout {
-    name: string,
-    templateName: string
+    gameName: string
     sections: ScoutSections
 }
 

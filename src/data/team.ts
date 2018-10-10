@@ -1,10 +1,10 @@
 import { Scouts } from './scout'
 
 export interface Teams {
-    [name: string]: Team
+    [number: number]: Team
 }
 
 export interface Team {
-    number: Number,
+    name: string,
     scouts: Scouts
 }
