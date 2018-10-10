@@ -9,5 +9,5 @@ export const enum ActionTypes {
 }
 
 export const addTeam = (name: string, number: number, scouts: Scouts = {}) => action(ActionTypes.ADD_TEAM, { name, number, scouts });
-export const addScout = (teamName: string, scoutName: string, scout: Scout) => action(ActionTypes.ADD_SCOUT, { teamName, scoutName, scout });
+export const addScout = (teamNumber: number, scoutName: string, scout: Scout) => action(ActionTypes.ADD_SCOUT, { teamNumber, scoutName, scout });
 export const addGame = (name: string, metrics: Metrics) => action(ActionTypes.ADD_GAME, { name, metrics });

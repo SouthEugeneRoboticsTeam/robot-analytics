@@ -13,10 +13,10 @@ const teams = (state: Teams = {}, action: ActionType<typeof actions>) => {
         case ActionTypes.ADD_SCOUT: {
             return {
                 ...state,
-                [action.payload.teamName]: {
-                    ...state[action.payload.teamName],
+                [action.payload.teamNumber]: {
+                    ...state[action.payload.teamNumber],
                     scouts: {
-                        ...state[action.payload.teamName].scouts,
+                        ...state[action.payload.teamNumber].scouts,
                         [action.payload.scoutName]: action.payload.scout
                     }
                 }
