@@ -7,6 +7,13 @@ import { App } from './components/App';
 import { store } from './state/store';
 import './firebase';
 import { theme } from './theme';
+import { addGame } from './state/actions';
+import { ScoutMetricType } from './data/metric';
+
+store.dispatch(addGame("PowerUp", { someMetric: { type: ScoutMetricType.NUMBER, value: 4 }}));
+store.dispatch(addGame("SteamWorks", {}));
+store.dispatch(addGame("Bunnybots2018", {}));
+
 
 const Root = () => (
     <BrowserRouter>
