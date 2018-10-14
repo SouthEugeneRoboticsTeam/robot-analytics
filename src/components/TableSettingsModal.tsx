@@ -12,6 +12,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Paper from '@material-ui/core/Paper';
+import { isNumberMetric } from '../data/metric';
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -44,27 +45,47 @@ export const TableSettingsModal = compose(
             }
         };
 
-        handleMetricChange = (metric: string, aspect: MetricCheckboxKey) => () => {
+        handleMetricChange = (metric: string) => () => {
             this.setState({
                 metricCheckboxes: {
                     ...this.state.metricCheckboxes,
                     [metric]: {
                         ...this.state.metricCheckboxes[metric],
-                        [aspect]: !this.state.metricCheckboxes[metric][aspect]
+                        checked: !this.state.metricCheckboxes[metric].checked
+                    }
+                }
+            })
+        };
+
+        handleSubmetricChange = (metric: string, submetric: string) => () => {
+            this.setState({
+                metricCheckboxes: {
+                    ...this.state.metricCheckboxes,
+                    [metric]: {
+                        ...this.state.metricCheckboxes[metric],
+                        submetricCheckboxes: {
+                            ...this.state.metricCheckboxes[metric].submetricCheckboxes,
+                            [submetric]: !this.state.metricCheckboxes[metric].submetricCheckboxes[submetric]
+                        }
                     }
                 }
             })
         };
 
         componentWillMount() {
+            const metrics = this.props.games[this.state.gameName].metrics;
             this.setState({
-                metricCheckboxes: Object.keys(this.props.games[this.state.gameName].metrics).reduce(
+                metricCheckboxes: Object.keys(metrics).reduce(
                     (result: MetricCheckboxes, metricName) => {
+                        const submetricNames = isNumberMetric(metrics[metricName])
+                            ? numberSubmetricNames
+                            : null;
                         result[metricName] = {
                             checked: false,
-                            avgChecked: false,
-                            maxChecked: false,
-                            minChecked: false
+                            submetricCheckboxes: submetricNames.reduce((result: SubmetricsCheckboxes, submetricName) => {
+                                result[submetricName] = false;
+                                return result;
+                            }, {})
                         };
                         return result;
                     },
@@ -91,50 +112,39 @@ export const TableSettingsModal = compose(
                             </MenuItem>
                         ))}
                     </Select>
-                    {...Object.keys(games[gameName].metrics).map((metricName) => (
-                        <div key={metricName}>
-                            <FormControlLabel
-                                control={<Checkbox
-                                    checked={metricCheckboxes[metricName].checked}
-                                    onChange={this.handleMetricChange(metricName, MetricCheckboxKey.CHECKED)}
-                                    color="primary"
-                                />}
-                                label={metricName}
-                            />
-                            <FormGroup className={classes.nestedCheckboxes} style={{ visibility: metricCheckboxes[metricName].checked ? 'visible' : 'hidden' }}>
+                    {...Object.keys(games[gameName].metrics).map((metricName) => {
+                        const metric = games[gameName].metrics[metricName];
+                        const submetricNames = isNumberMetric(metric)
+                            ? numberSubmetricNames
+                            : null;
+                        return (
+                            <div key={metricName}>
                                 <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={metricCheckboxes[metricName].avgChecked}
-                                            onChange={this.handleMetricChange(metricName, MetricCheckboxKey.AVG_CHECKED)}
-                                            color="primary"
-                                        />
-                                    }
-                                    label="avg"
+                                    control={<Checkbox
+                                        checked={metricCheckboxes[metricName].checked}
+                                        onChange={this.handleMetricChange(metricName)}
+                                        color="primary"
+                                    />}
+                                    label={metricName}
                                 />
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={metricCheckboxes[metricName].maxChecked}
-                                            onChange={this.handleMetricChange(metricName, MetricCheckboxKey.MAX_CHECKED)}
-                                            color="primary"
+                                <FormGroup className={classes.nestedCheckboxes} style={{ display: metricCheckboxes[metricName].checked ? null : 'none' }}>
+                                    {...submetricNames.map((submetricName) => (
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={metricCheckboxes[metricName].submetricCheckboxes[submetricName]}
+                                                    onChange={this.handleSubmetricChange(metricName, submetricName)}
+                                                    color="primary"
+                                                />
+                                            }
+                                            label={submetricName}
+                                            key={submetricName}
                                         />
-                                    }
-                                    label="max"
-                                />
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={metricCheckboxes[metricName].minChecked}
-                                            onChange={this.handleMetricChange(metricName, MetricCheckboxKey.MIN_CHECKED)}
-                                            color="primary"
-                                        />
-                                    }
-                                    label="min"
-                                />
-                            </FormGroup>
-                        </div>
-                    ))}
+                                    ))}
+                                </FormGroup>
+                            </div>
+                        )
+                    })}
                 </Paper>
             )
         }
@@ -157,14 +167,11 @@ interface MetricCheckboxes {
 
 interface MetricCheckbox {
     checked: boolean
-    maxChecked: boolean
-    minChecked: boolean
-    avgChecked: boolean
+    submetricCheckboxes: SubmetricsCheckboxes
 }
 
-enum MetricCheckboxKey {
-    CHECKED = 'checked',
-    MAX_CHECKED = 'maxChecked',
-    MIN_CHECKED = 'minChecked',
-    AVG_CHECKED = 'avgChecked'
+interface SubmetricsCheckboxes {
+    [name: string]: boolean
 }
+
+const numberSubmetricNames = ['Maximum', 'Minimum', 'Average'];

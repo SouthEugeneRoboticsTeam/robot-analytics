@@ -12,7 +12,6 @@ export class TableView extends React.Component<React.Props<any>, TableViewState>
 
     handleModalOpen = ()  => {
         this.setState({ isModalOpen: true });
-        console.log("I AM WORKS")
     };
 
     handleModalClose = ()  => {
