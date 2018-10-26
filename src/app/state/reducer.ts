@@ -8,7 +8,7 @@ import * as actions from './actions';
 const teams = (state: Teams = {}, action: ActionType<typeof actions>) => {
     switch (action.type) {
         case ActionTypes.ADD_TEAM: {
-            return { ...state, [action.payload.number]: { name: action.payload.name, scouts: action.payload.scouts }}
+            return { ...state, [action.payload.teamNumber]: { name: action.payload.name, scouts: action.payload.scouts }}
         }
         case ActionTypes.ADD_SCOUT: {
             return {
