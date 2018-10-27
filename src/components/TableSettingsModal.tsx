@@ -12,7 +12,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Paper from '@material-ui/core/Paper';
-import { isNumberMetric } from '../data/metric';
+import { take } from '../utils';
+import { calculations } from '../data/calculations';
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -57,15 +58,15 @@ export const TableSettingsModal = compose(
             })
         };
 
-        handleSubmetricChange = (metric: string, submetric: string) => () => {
+        handleCalculationChange = (metric: string, calculation: string) => () => {
             this.setState({
                 metricCheckboxes: {
                     ...this.state.metricCheckboxes,
                     [metric]: {
                         ...this.state.metricCheckboxes[metric],
-                        submetricCheckboxes: {
-                            ...this.state.metricCheckboxes[metric].submetricCheckboxes,
-                            [submetric]: !this.state.metricCheckboxes[metric].submetricCheckboxes[submetric]
+                        calculationCheckboxes: {
+                            ...this.state.metricCheckboxes[metric].calculationCheckboxes,
+                            [calculation]: !this.state.metricCheckboxes[metric].calculationCheckboxes[calculation]
                         }
                     }
                 }
@@ -77,15 +78,14 @@ export const TableSettingsModal = compose(
             this.setState({
                 metricCheckboxes: Object.keys(metrics).reduce(
                     (result: MetricCheckboxes, metricName) => {
-                        const submetricNames = isNumberMetric(metrics[metricName])
-                            ? numberSubmetricNames
-                            : null;
                         result[metricName] = {
                             checked: false,
-                            submetricCheckboxes: submetricNames.reduce((result: SubmetricsCheckboxes, submetricName) => {
-                                result[submetricName] = false;
-                                return result;
-                            }, {})
+                            calculationCheckboxes: take(metrics[metricName], (metric) => {
+                                return Object.keys(calculations[metric.type]).reduce((result: CalculationCheckboxes, key) => {
+                                    result[key] = false;
+                                    return result;
+                                }, {})
+                            })
                         };
                         return result;
                     },
@@ -114,9 +114,6 @@ export const TableSettingsModal = compose(
                     </Select>
                     {...Object.keys(games[gameName].metrics).map((metricName) => {
                         const metric = games[gameName].metrics[metricName];
-                        const submetricNames = isNumberMetric(metric)
-                            ? numberSubmetricNames
-                            : null;
                         return (
                             <div key={metricName}>
                                 <FormControlLabel
@@ -128,12 +125,12 @@ export const TableSettingsModal = compose(
                                     label={metricName}
                                 />
                                 <FormGroup className={classes.nestedCheckboxes} style={{ display: metricCheckboxes[metricName].checked ? null : 'none' }}>
-                                    {...submetricNames.map((submetricName) => (
+                                    {...Object.keys(calculations[metric.type]).map((submetricName) => (
                                         <FormControlLabel
                                             control={
                                                 <Checkbox
-                                                    checked={metricCheckboxes[metricName].submetricCheckboxes[submetricName]}
-                                                    onChange={this.handleSubmetricChange(metricName, submetricName)}
+                                                    checked={metricCheckboxes[metricName].calculationCheckboxes[submetricName]}
+                                                    onChange={this.handleCalculationChange(metricName, submetricName)}
                                                     color="primary"
                                                 />
                                             }
@@ -167,11 +164,9 @@ interface MetricCheckboxes {
 
 interface MetricCheckbox {
     checked: boolean
-    submetricCheckboxes: SubmetricsCheckboxes
+    calculationCheckboxes: CalculationCheckboxes
 }
 
-interface SubmetricsCheckboxes {
+interface CalculationCheckboxes {
     [name: string]: boolean
 }
-
-const numberSubmetricNames = ['Maximum', 'Minimum', 'Average'];
