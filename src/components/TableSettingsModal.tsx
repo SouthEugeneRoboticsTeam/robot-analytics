@@ -74,8 +74,7 @@ export const TableSettingsModal = compose(
         };
 
         componentWillMount() {
-            const metrics = this.props.games[this.state.gameName].metrics;
-            this.setState({
+            this.setState(take(this.props.games[this.state.gameName].metrics, metrics => ({
                 metricCheckboxes: Object.keys(metrics).reduce(
                     (result: MetricCheckboxes, metricName) => {
                         result[metricName] = {
@@ -91,7 +90,7 @@ export const TableSettingsModal = compose(
                     },
                     {}
                 )
-            })
+            })))
         }
 
         render() {
@@ -113,8 +112,7 @@ export const TableSettingsModal = compose(
                         ))}
                     </Select>
                     {...Object.keys(games[gameName].metrics).map((metricName) => {
-                        const metric = games[gameName].metrics[metricName];
-                        return (
+                        return take(games[gameName].metrics[metricName], metric => (
                             <div key={metricName}>
                                 <FormControlLabel
                                     control={<Checkbox
@@ -140,7 +138,7 @@ export const TableSettingsModal = compose(
                                     ))}
                                 </FormGroup>
                             </div>
-                        )
+                        ))
                     })}
                 </Paper>
             )
