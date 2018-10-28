@@ -4,9 +4,9 @@
     "sourceMap": true,
     "noImplicitAny": true,
     "module": "commonjs",
-    "target": "es5",
+    "target": "es2016",
     "jsx": "react",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
   },
   "include": [
     "./src/**/*"
