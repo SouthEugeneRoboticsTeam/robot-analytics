@@ -7,14 +7,22 @@ import { TableSettingsModal } from '../components/TableSettingsModal';
 
 export class TableView extends React.Component<React.Props<any>, TableViewState> {
     state: TableViewState = {
-        isModalOpen: false
+        isModalOpen: false,
+        configuration: []
     };
 
-    handleModalOpen = ()  => {
+    setConfiguration = (calculations: Array<{ metricName: string, calculationName: string }>) => {
+        this.setState({ configuration: calculations });
+        this.state.configuration.forEach((thing) => {
+            console.log(`${thing.metricName} : ${thing.calculationName}`)
+        })
+    };
+
+    handleModalOpen = () => {
         this.setState({ isModalOpen: true });
     };
 
-    handleModalClose = ()  => {
+    handleModalClose = () => {
         this.setState({ isModalOpen: false });
     };
 
@@ -28,7 +36,11 @@ export class TableView extends React.Component<React.Props<any>, TableViewState>
                     open={isModalOpen}
                     onClose={this.handleModalClose}
                 >
-                    <TableSettingsModal />
+                    <TableSettingsModal
+                        setCalculations={this.setConfiguration}
+                        isModalOpen={this.state.isModalOpen}
+                        handleModalClose={this.handleModalClose}
+                    />
                 </Modal>
                 <IconButton onClick={this.handleModalOpen}>
                     <SettingsIcon />
@@ -40,4 +52,5 @@ export class TableView extends React.Component<React.Props<any>, TableViewState>
 
 interface TableViewState {
     isModalOpen: boolean
+    configuration: Array<{ metricName: string, calculationName: string }>
 }

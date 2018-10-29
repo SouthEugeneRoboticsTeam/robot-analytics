@@ -14,6 +14,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import Paper from '@material-ui/core/Paper';
 import { take } from '../utils';
 import { calculations } from '../data/calculations';
+import { Modal } from '@material-ui/core';
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -31,13 +32,32 @@ const styles = (theme: Theme) => createStyles({
 });
 
 export const TableSettingsModal = compose(
-    withStyles(styles),
-    connect(state => (state))
+    connect((state, ownProps: TableSettingsModalProps) => ({ ...state, ...ownProps })),
+    withStyles(styles)
 )(
-    class extends React.Component<TableSettingsModalProps, TableSettingsModalState> {
+    class extends React.Component<TableSettingsModalConnectProps, TableSettingsModalState> {
         state: TableSettingsModalState = {
             gameName: Object.keys(this.props.games)[0],
             metricCheckboxes: {}
+        };
+
+        handleModalClose = () => {
+            this.props.handleModalClose();
+            this.props.setCalculations(
+                Object.keys(this.state.metricCheckboxes).reduce((result: Array<{ metricName: string, calculationName: string }>, metricName) => (
+                    take(this.state.metricCheckboxes[metricName], (metricCheckbox) => {
+                        if (metricCheckbox.checked) {
+                            Object.keys(metricCheckbox.calculationCheckboxes).forEach((calculationName) => {
+                                if (metricCheckbox.calculationCheckboxes[calculationName]) {
+                                    result.push({ metricName, calculationName })
+                                }
+                            })
+                        }
+                        console.log(result);
+                        return result;
+                    })
+                ), [])
+            );
         };
 
         handleGameChange = (event: any) => {
@@ -97,56 +117,69 @@ export const TableSettingsModal = compose(
             const { games, classes } = this.props;
             const { gameName, metricCheckboxes } = this.state;
             return (
-                <Paper className={classes.root} tabIndex={-1}>
-                    <Select
-                        value={this.state.gameName}
-                        onChange={this.handleGameChange}
-                    >
-                        {...Object.keys(games).map((gameName) => (
-                            <MenuItem
-                                key={gameName}
-                                value={gameName}
-                            >
-                                {gameName}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                    {...Object.keys(games[gameName].metrics).map((metricName) => {
-                        return take(games[gameName].metrics[metricName], metric => (
-                            <div key={metricName}>
-                                <FormControlLabel
-                                    control={<Checkbox
-                                        checked={metricCheckboxes[metricName].checked}
-                                        onChange={this.handleMetricChange(metricName)}
-                                        color="primary"
-                                    />}
-                                    label={metricName}
-                                />
-                                <FormGroup className={classes.nestedCheckboxes} style={{ display: metricCheckboxes[metricName].checked ? null : 'none' }}>
-                                    {...Object.keys(calculations[metric.type]).map((submetricName) => (
-                                        <FormControlLabel
-                                            control={
-                                                <Checkbox
-                                                    checked={metricCheckboxes[metricName].calculationCheckboxes[submetricName]}
-                                                    onChange={this.handleCalculationChange(metricName, submetricName)}
-                                                    color="primary"
-                                                />
-                                            }
-                                            label={submetricName}
-                                            key={submetricName}
-                                        />
-                                    ))}
-                                </FormGroup>
-                            </div>
-                        ))
-                    })}
-                </Paper>
+                <Modal
+                    tabIndex={-1}
+                    open={this.props.isModalOpen}
+                    onClose={this.handleModalClose}
+                >
+                    <Paper className={classes.root} tabIndex={-1}>
+                        <Select
+                            value={this.state.gameName}
+                            onChange={this.handleGameChange}
+                        >
+                            {...Object.keys(games).map((gameName) => (
+                                <MenuItem
+                                    key={gameName}
+                                    value={gameName}
+                                >
+                                    {gameName}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                        {...Object.keys(games[gameName].metrics).map((metricName) => {
+                            return take(games[gameName].metrics[metricName], metric => (
+                                <div key={metricName}>
+                                    <FormControlLabel
+                                        control={<Checkbox
+                                            checked={metricCheckboxes[metricName].checked}
+                                            onChange={this.handleMetricChange(metricName)}
+                                            color="primary"
+                                        />}
+                                        label={metricName}
+                                    />
+                                    <FormGroup className={classes.nestedCheckboxes}
+                                               style={{ display: metricCheckboxes[metricName].checked ? null : 'none' }}>
+                                        {...Object.keys(calculations[metric.type]).map((submetricName) => (
+                                            <FormControlLabel
+                                                control={
+                                                    <Checkbox
+                                                        checked={metricCheckboxes[metricName].calculationCheckboxes[submetricName]}
+                                                        onChange={this.handleCalculationChange(metricName, submetricName)}
+                                                        color="primary"
+                                                    />
+                                                }
+                                                label={submetricName}
+                                                key={submetricName}
+                                            />
+                                        ))}
+                                    </FormGroup>
+                                </div>
+                            ))
+                        })}
+                    </Paper>
+                </Modal>
             )
         }
     }
 );
 
-export interface TableSettingsModalProps extends WithStyles<typeof styles> {
+export interface TableSettingsModalProps {
+    setCalculations: (config: Array<{ metricName: string, calculationName: string }>) => void
+    isModalOpen: boolean
+    handleModalClose: () => void
+}
+
+export interface TableSettingsModalConnectProps extends WithStyles<typeof styles>, TableSettingsModalProps {
     teams: Teams
     games: Games
 }
