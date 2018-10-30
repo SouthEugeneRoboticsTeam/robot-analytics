@@ -11,20 +11,20 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
-import Paper from '@material-ui/core/Paper';
+import Dialog from '@material-ui/core/Dialog';
+import DialogHeader from '@material-ui/core/DialogTitle'
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
 import { take } from '../utils';
 import { calculations } from '../data/calculations';
-import { Modal } from '@material-ui/core';
+import { Button, withMobileDialog } from '@material-ui/core';
+import { theme } from '../theme';
 
 const styles = (theme: Theme) => createStyles({
-    root: {
-        position: 'absolute',
-        backgroundColor: theme.palette.background.paper,
-        boxShadow: theme.shadows[5],
-        padding: theme.spacing.unit * 4,
-        top: `50%`,
-        left: `50%`,
-        transform: `translate(-50%, -50%)`,
+    checkboxContainer: {
+        height: theme.spacing.unit * 24,
+        border: '1px solid grey',
+        margin: take(theme.spacing.unit * 3, m => `0 ${m}px ${m}px ${m}px`)
     },
     nestedCheckboxes: {
         paddingLeft: theme.spacing.unit * 4,
@@ -33,7 +33,8 @@ const styles = (theme: Theme) => createStyles({
 
 export const TableSettingsModal = compose(
     connect((state, ownProps: TableSettingsModalProps) => ({ ...state, ...ownProps })),
-    withStyles(styles)
+    withStyles(styles),
+    withMobileDialog({ breakpoint: 'xs' })
 )(
     class extends React.Component<TableSettingsModalConnectProps, TableSettingsModalState> {
         state: TableSettingsModalState = {
@@ -41,7 +42,7 @@ export const TableSettingsModal = compose(
             metricCheckboxes: {}
         };
 
-        handleModalClose = () => {
+        handleModalAccept = () => {
             this.props.handleModalClose();
             this.props.setCalculations(
                 Object.keys(this.state.metricCheckboxes).reduce((result: Array<{ metricName: string, calculationName: string }>, metricName) => (
@@ -114,15 +115,19 @@ export const TableSettingsModal = compose(
         }
 
         render() {
-            const { games, classes } = this.props;
+            const { games, classes, handleModalClose } = this.props;
             const { gameName, metricCheckboxes } = this.state;
             return (
-                <Modal
-                    tabIndex={-1}
+                <Dialog
                     open={this.props.isModalOpen}
-                    onClose={this.handleModalClose}
+                    onClose={handleModalClose}
+                    fullWidth
+                    fullScreen={this.props.fullScreen}
                 >
-                    <Paper className={classes.root} tabIndex={-1}>
+                    <DialogHeader>Table Settings</DialogHeader>
+                    <div style={{
+                        padding: take(theme.spacing.unit * 3, p => `0 ${p}px ${p}px ${p}px`)
+                    }}>
                         <Select
                             value={this.state.gameName}
                             onChange={this.handleGameChange}
@@ -136,6 +141,8 @@ export const TableSettingsModal = compose(
                                 </MenuItem>
                             ))}
                         </Select>
+                    </div>
+                    <DialogContent className={classes.checkboxContainer}>
                         {...Object.keys(games[gameName].metrics).map((metricName) => {
                             return take(games[gameName].metrics[metricName], metric => (
                                 <div key={metricName}>
@@ -166,8 +173,16 @@ export const TableSettingsModal = compose(
                                 </div>
                             ))
                         })}
-                    </Paper>
-                </Modal>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleModalClose} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={this.handleModalAccept} color="primary" variant="contained">
+                            OK
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             )
         }
     }
@@ -182,6 +197,7 @@ export interface TableSettingsModalProps {
 export interface TableSettingsModalConnectProps extends WithStyles<typeof styles>, TableSettingsModalProps {
     teams: Teams
     games: Games
+    fullScreen: boolean
 }
 
 export interface TableSettingsModalState {
