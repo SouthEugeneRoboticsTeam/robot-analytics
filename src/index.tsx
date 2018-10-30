@@ -7,18 +7,6 @@ import { App } from './components/App';
 import { store } from './state/store';
 import './firebase';
 import { theme } from './theme';
-import { addGame } from './state/actions';
-import { ScoutMetricType } from './data/metric';
-
-store.dispatch(addGame("PowerUp", {
-    'Cubes in Scale': { type: ScoutMetricType.NUMBER, value: 4 },
-    'Cubes in Switch': { type: ScoutMetricType.NUMBER, value: 8 },
-    'Cubes in Exchange': { type: ScoutMetricType.NUMBER, value: 8 }
-
-}));
-store.dispatch(addGame("SteamWorks", {}));
-store.dispatch(addGame("Bunnybots2018", {}));
-
 
 const Root = () => (
     <BrowserRouter>
