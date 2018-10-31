@@ -7,11 +7,12 @@ import { TableSettingsModal } from '../components/TableSettingsModal';
 export class TableView extends React.Component<React.Props<any>, TableViewState> {
     state: TableViewState = {
         isModalOpen: false,
-        configuration: []
+        gameName: '',
+        calculations: []
     };
 
-    setConfiguration = (calculations: Array<{ metricName: string, calculationName: string }>) => {
-        this.setState({ configuration: calculations });
+    configureTable = (gameName: string, calculations: Array<{ metricName: string, calculationName: string }>) => {
+        this.setState({ gameName, calculations });
     };
 
     handleModalOpen = () => {
@@ -28,7 +29,7 @@ export class TableView extends React.Component<React.Props<any>, TableViewState>
             <div>
                 <Typography variant="display2">Table View</Typography>
                 <TableSettingsModal
-                    setCalculations={this.setConfiguration}
+                    configureTable={this.configureTable}
                     isModalOpen={isModalOpen}
                     handleModalClose={this.handleModalClose}
                 />
@@ -42,5 +43,6 @@ export class TableView extends React.Component<React.Props<any>, TableViewState>
 
 interface TableViewState {
     isModalOpen: boolean
-    configuration: Array<{ metricName: string, calculationName: string }>
+    gameName: string
+    calculations: Array<{ metricName: string, calculationName: string }>
 }

@@ -44,7 +44,8 @@ export const TableSettingsModal = compose(
 
         handleModalAccept = () => {
             this.props.handleModalClose();
-            this.props.setCalculations(
+            this.props.configureTable(
+                this.state.gameName,
                 Object.keys(this.state.metricCheckboxes).reduce((result: Array<{ metricName: string, calculationName: string }>, metricName) => (
                     take(this.state.metricCheckboxes[metricName], (metricCheckbox) => {
                         if (metricCheckbox.checked) {
@@ -191,7 +192,7 @@ export const TableSettingsModal = compose(
 );
 
 export interface TableSettingsModalProps {
-    setCalculations: (config: Array<{ metricName: string, calculationName: string }>) => void
+    configureTable: (gameName: string, calculations: Array<{ metricName: string, calculationName: string }>) => void
     isModalOpen: boolean
     handleModalClose: () => void
 }
