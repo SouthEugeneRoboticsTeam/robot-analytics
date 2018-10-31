@@ -9,4 +9,3 @@ const preferences = {
 }
 
 addTeams(data["teams"], preferences.gameName)
-
