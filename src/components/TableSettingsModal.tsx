@@ -15,7 +15,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogHeader from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
-import { take } from '../utils';
+import { backup, safe, take, takeNotNull } from '../utils';
 import { calculations } from '../data/calculations';
 import { Button, withMobileDialog } from '@material-ui/core';
 import { theme } from '../theme';
@@ -38,7 +38,7 @@ export const TableSettingsModal = compose(
 )(
     class extends React.Component<TableSettingsModalConnectProps, TableSettingsModalState> {
         state: TableSettingsModalState = {
-            gameName: Object.keys(this.props.games)[0],
+            gameName: backup(Object.keys(this.props.games)[0], ''),
             metricCheckboxes: {}
         };
 
@@ -95,41 +95,43 @@ export const TableSettingsModal = compose(
         };
 
         componentWillMount() {
-            this.setState(take(this.props.games[this.state.gameName].metrics, metrics => ({
-                metricCheckboxes: Object.keys(metrics).reduce(
-                    (result: MetricCheckboxes, metricName) => {
-                        result[metricName] = {
-                            checked: false,
-                            calculationCheckboxes: take(metrics[metricName], (metric) => {
-                                return Object.keys(calculations[metric.type]).reduce((result: CalculationCheckboxes, key) => {
-                                    result[key] = false;
-                                    return result;
-                                }, {})
-                            })
-                        };
-                        return result;
-                    },
-                    {}
-                )
-            })))
+            takeNotNull(this.props.games[this.state.gameName], game => {
+                this.setState(take(game.metrics, metrics => ({
+                    metricCheckboxes: Object.keys(metrics).reduce(
+                        (result: MetricCheckboxes, metricName) => {
+                            result[metricName] = {
+                                checked: false,
+                                calculationCheckboxes: take(metrics[metricName], (metric) => {
+                                    return Object.keys(calculations[metric.type]).reduce((result: CalculationCheckboxes, key) => {
+                                        result[key] = false;
+                                        return result;
+                                    }, {})
+                                })
+                            };
+                            return result;
+                        },
+                        {}
+                    )
+                })))
+            });
         }
 
         render() {
-            const { games, classes, handleModalClose } = this.props;
+            const { games, classes, isModalOpen, handleModalClose, fullScreen } = this.props;
             const { gameName, metricCheckboxes } = this.state;
             return (
                 <Dialog
-                    open={this.props.isModalOpen}
+                    open={isModalOpen}
                     onClose={handleModalClose}
                     fullWidth
-                    fullScreen={this.props.fullScreen}
+                    fullScreen={fullScreen}
                 >
                     <DialogHeader>Table Settings</DialogHeader>
                     <div style={{
                         padding: take(theme.spacing.unit * 3, p => `0 ${p}px ${p}px ${p}px`)
                     }}>
                         <Select
-                            value={this.state.gameName}
+                            value={gameName}
                             onChange={this.handleGameChange}
                         >
                             {...Object.keys(games).map((gameName) => (
@@ -143,7 +145,7 @@ export const TableSettingsModal = compose(
                         </Select>
                     </div>
                     <DialogContent className={classes.checkboxContainer}>
-                        {...Object.keys(games[gameName].metrics).map((metricName) => {
+                        {...Object.keys(backup(safe(games[gameName], 'metrics'), {})).map((metricName) => {
                             return take(games[gameName].metrics[metricName], metric => (
                                 <div key={metricName}>
                                     <FormControlLabel
