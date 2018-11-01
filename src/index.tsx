@@ -8,6 +8,17 @@ import { store } from './state/store';
 import './firebase';
 import { theme } from './theme';
 
+// Test code TODO remove this before merging!
+import { addGame } from './state/actions';
+import { ScoutMetricType } from './data/metric';
+
+store.dispatch(addGame('PowerUp', {
+    'Cubes in Scale': { type: ScoutMetricType.NUMBER, value: 0 },
+    'Cubes in Switch': { type: ScoutMetricType.NUMBER, value: 0 },
+    'Cubes in Exchange': { type: ScoutMetricType.NUMBER, value: 0 }
+}));
+// Do it!
+
 const Root = () => (
     <BrowserRouter>
         <Provider store={store}>
