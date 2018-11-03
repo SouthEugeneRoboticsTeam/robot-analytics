@@ -1,20 +1,30 @@
 import { Metric, ScoutMetricType } from './metric';
+import { reduce } from 'lodash';
 
 export type Calculations = {
-    [P in ScoutMetricType]: {
-        [name: string]: (...metrics: Array<Metric>) => Metric
-    }
+    [name: string]: Calculation
+}
+
+export interface Calculation<T = any> {
+    type: ScoutMetricType,
+    invoke: (...metrics: Array<Metric<T>>) => Metric
 }
 
 export const calculations: Calculations = {
-    'text': {},
-    'number': {
-        'Maximum': (...metrics: Array<Metric<number>>) => metrics[0],
-        'Minimum': (...metrics: Array<Metric<number>>) => metrics[0],
-        'Average': (...metrics: Array<Metric<number>>) => metrics[0],
-        'Standard Deviation': (...metrics: Array<Metric<number>>) => metrics[0],
+    'Maximum': {
+        type: ScoutMetricType.NUMBER,
+        invoke: (...metrics: Array<Metric>) => metrics[0]
     },
-    'numberArray': {},
-    'boolean': {},
-    'enum': {}
+    'Minimum': {
+        type: ScoutMetricType.NUMBER,
+        invoke: (...metrics: Array<Metric>) => metrics[0]
+    },
+    'Average': {
+        type: ScoutMetricType.NUMBER,
+        invoke: (...metrics: Array<Metric>) => metrics[0]
+    },
+    'Standard Deviation': {
+        type: ScoutMetricType.NUMBER,
+        invoke: (...metrics: Array<Metric>) => metrics[0]
+    }
 };

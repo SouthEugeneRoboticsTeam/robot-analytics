@@ -56,7 +56,6 @@ export const TableSettingsModal = compose(
                                 }
                             })
                         }
-                        console.log(result);
                         return result;
                     })
                 ), [])
@@ -103,12 +102,10 @@ export const TableSettingsModal = compose(
                         (result: MetricCheckboxes, metricName) => {
                             result[metricName] = {
                                 checked: false,
-                                calculationCheckboxes: take(metrics[metricName], (metric) => {
-                                    return Object.keys(calculations[metric.type]).reduce((result: CalculationCheckboxes, key) => {
+                                calculationCheckboxes: Object.keys(calculations).reduce((result: CalculationCheckboxes, key) => {
                                         result[key] = false;
                                         return result;
-                                    }, {})
-                                })
+                                }, {})
                             };
                             return result;
                         },
@@ -147,34 +144,33 @@ export const TableSettingsModal = compose(
                         </Select>
                     </div>
                     <DialogContent className={classes.checkboxContainer}>
-                        {...Object.keys(backup(safe(games[gameName], 'metrics'), {})).map((metricName) => {
-                            return take(games[gameName].metrics[metricName], metric => (
-                                <div key={metricName}>
-                                    <FormControlLabel
-                                        control={<Checkbox
-                                            checked={metricCheckboxes[metricName].checked}
-                                            onChange={this.handleMetricChange(metricName)}
-                                            color="primary"
-                                        />}
-                                        label={metricName}
-                                    />
-                                    <FormGroup className={classes.nestedCheckboxes}
-                                               style={{ display: metricCheckboxes[metricName].checked ? null : 'none' }}>
-                                        {...Object.keys(calculations[metric.type]).map((submetricName) => (
-                                            <FormControlLabel
-                                                control={
-                                                    <Checkbox
-                                                        checked={metricCheckboxes[metricName].calculationCheckboxes[submetricName]}
-                                                        onChange={this.handleCalculationChange(metricName, submetricName)}
-                                                        color="primary"
-                                                    />
-                                                }
-                                                label={submetricName}
-                                                key={submetricName}
-                                            />
-                                        ))}
-                                    </FormGroup>
-                                </div>
+                        {...Object.keys(backup(safe(games[gameName], 'metrics'), {})).map((metricName) => (
+                            <div key={metricName}>
+                                <FormControlLabel
+                                    control={<Checkbox
+                                        checked={metricCheckboxes[metricName].checked}
+                                        onChange={this.handleMetricChange(metricName)}
+                                        color="primary"
+                                    />}
+                                    label={metricName}
+                                />
+                                <FormGroup className={classes.nestedCheckboxes}
+                                           style={{ display: metricCheckboxes[metricName].checked ? null : 'none' }}>
+                                    {...Object.keys(calculations).map((submetricName) => (
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={metricCheckboxes[metricName].calculationCheckboxes[submetricName]}
+                                                    onChange={this.handleCalculationChange(metricName, submetricName)}
+                                                    color="primary"
+                                                />
+                                            }
+                                            label={submetricName}
+                                            key={submetricName}
+                                        />
+                                    ))}
+                                </FormGroup>
+                            </div>
                             ))
                         })}
                     </DialogContent>
