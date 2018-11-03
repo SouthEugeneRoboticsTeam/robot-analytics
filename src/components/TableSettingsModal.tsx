@@ -19,6 +19,7 @@ import { backup, safe, take, takeNotNull } from '../utils';
 import { calculations } from '../data/calculations';
 import { Button, withMobileDialog } from '@material-ui/core';
 import { theme } from '../theme';
+import { CalculationSetting } from '../routes/TableView';
 
 const styles = (theme: Theme) => createStyles({
     checkboxContainer: {
@@ -46,7 +47,7 @@ export const TableSettingsModal = compose(
             this.props.handleModalClose();
             this.props.configureTable(
                 this.state.gameName,
-                Object.keys(this.state.metricCheckboxes).reduce((result: Array<{ metricName: string, calculationName: string }>, metricName) => (
+                Object.keys(this.state.metricCheckboxes).reduce((result: Array<CalculationSetting>, metricName) => (
                     take(this.state.metricCheckboxes[metricName], (metricCheckbox) => {
                         if (metricCheckbox.checked) {
                             Object.keys(metricCheckbox.calculationCheckboxes).forEach((calculationName) => {
@@ -192,7 +193,7 @@ export const TableSettingsModal = compose(
 );
 
 export interface TableSettingsModalProps {
-    configureTable: (gameName: string, calculations: Array<{ metricName: string, calculationName: string }>) => void
+    configureTable: (gameName: string, calculations: Array<CalculationSetting>) => void
     isModalOpen: boolean
     handleModalClose: () => void
 }

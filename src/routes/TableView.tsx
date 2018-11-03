@@ -5,16 +5,17 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import { TableSettingsModal } from '../components/TableSettingsModal';
 import Table from '@material-ui/core/Table';
 import { Paper, TableHead, TableRow, TableCell } from '@material-ui/core';
+import { has } from 'lodash';
 
 export class TableView extends React.Component<React.Props<any>, TableViewState> {
     state: TableViewState = {
         isModalOpen: false,
         gameName: '',
-        calculations: []
+        calculationSettings: []
     };
 
-    configureTable = (gameName: string, calculations: Array<{ metricName: string, calculationName: string }>) => {
-        this.setState({ gameName, calculations });
+    configureTable = (gameName: string, calculationSettings: Array<CalculationSetting>) => {
+        this.setState({ gameName, calculationSettings });
     };
 
     handleModalOpen = () => {
@@ -44,9 +45,9 @@ export class TableView extends React.Component<React.Props<any>, TableViewState>
                             <TableRow>
                                 <TableCell>Team Name</TableCell>
                                 <TableCell>Team Number</TableCell>
-                                {...this.state.calculations.map(calculation => (
-                                    <TableCell key={`${calculation.metricName}-${calculation.calculationName}`}>
-                                        {`${calculation.metricName} (${calculation.calculationName})`}
+                                {...this.state.calculationSettings.map(setting => (
+                                    <TableCell key={`${setting.metricName}-${setting.calculationName}`}>
+                                        {`${setting.metricName} (${setting.calculationName})`}
                                     </TableCell>
                                 ))}
                             </TableRow>
@@ -61,5 +62,10 @@ export class TableView extends React.Component<React.Props<any>, TableViewState>
 interface TableViewState {
     isModalOpen: boolean
     gameName: string
-    calculations: Array<{ metricName: string, calculationName: string }>
+    calculationSettings: Array<CalculationSetting>
+}
+
+export interface CalculationSetting {
+    metricName: string,
+    calculationName: string
 }
