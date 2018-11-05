@@ -2,9 +2,9 @@ import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { TableSettingsModal } from '../components/TableSettingsModal';
 import Table from '@material-ui/core/Table';
 import { Paper, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
+import { TableSettingsModal } from '../components/TableSettingsModal';
 import { flatten, has, keys, map, mapKeys } from 'lodash';
 import { Teams } from '../data/team';
 import { calculations } from '../data/calculations';
@@ -62,11 +62,11 @@ export const TableView = connect(
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {...map(teams, (team, teamNumber) => (
+                            {map(teams, (team, teamNumber) => (
                                 <TableRow key={team.name}>
                                     <TableCell>{team.name}</TableCell>
                                     <TableCell>{teamNumber}</TableCell>
-                                    {...map(calculationSettings, setting => (
+                                    {map(calculationSettings, setting => (
                                         <TableCell key={`${setting.metricName}-${setting.calculationName}`}>
                                             {`${calculations[take(setting.calculationName, c => {
                                                 console.log(c);
