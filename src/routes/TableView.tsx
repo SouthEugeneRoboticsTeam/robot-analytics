@@ -48,7 +48,7 @@ export const TableView = connect(
                 <IconButton onClick={this.handleModalOpen}>
                     <SettingsIcon/>
                 </IconButton>
-                <Paper>
+                <Paper style={{overflowX: 'scroll'}}>
                     <Table>
                         <TableHead>
                             <TableRow>
