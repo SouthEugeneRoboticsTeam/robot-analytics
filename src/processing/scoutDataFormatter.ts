@@ -3,8 +3,8 @@ import { store } from '../state/store'
 import { ScoutSections } from '../data/scout'
 
 // Takes one object of raw scout data from one match. Will return a formatted object of the same data
-function formatScout(scoutData: object, gameName:string) {
-    const scoutMetrics = (scoutData as any)['metrics']
+function formatScout(scoutData: any, gameName:string) {
+    const scoutMetrics = scoutData['metrics']
 
     // Initialize object to store the formatted scout data
     var formattedMetrics: ScoutSections = {}
@@ -42,15 +42,15 @@ function formatScout(scoutData: object, gameName:string) {
 
 // Add teams and their scouts to the state
 // TODO: Use TBA to include team name in state instead of team number
-export function addTeams(allTeams: object, gameName:string) {
+export function addTeams(allTeams: any, gameName:string) {
     for (var team in allTeams) {
         // Add team to the state and creates the scouts object within the object
         store.dispatch(addTeam(team, Number(team), {}))
         // Format and associate each scout with its team
-        for (var scout in (allTeams as any)[team]) {
+        for (var scout in allTeams[team]) {
             store.dispatch(addScout(Number(team),
-                            (allTeams as any)[team][Number(scout)]['name'],
-                            formatScout((allTeams as any)[team][Number(scout)], gameName))
+                            allTeams[team][Number(scout)]['name'],
+                            formatScout(allTeams[team][Number(scout)], gameName))
             )
         }
     
