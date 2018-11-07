@@ -1,6 +1,6 @@
 import { action } from 'typesafe-actions';
-import { Scout, Scouts } from '../data/scout';
-import { Metrics } from '../data/metric';
+import { Scout, Scouts } from '@robot-analytics/data/scout';
+import { Metrics } from '@robot-analytics/data/metric';
 
 export const enum ActionTypes {
     ADD_TEAM = 'ADD_TEAM',

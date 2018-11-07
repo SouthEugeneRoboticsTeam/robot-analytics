@@ -1,4 +1,4 @@
-import { Metric, ScoutMetricType } from './metric';
+import { Metric, ScoutMetricType } from '@robot-analytics/data/metric';
 import { reduce } from 'lodash';
 
 export type Calculations = {

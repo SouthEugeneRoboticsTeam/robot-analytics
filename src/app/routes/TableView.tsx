@@ -6,11 +6,11 @@ import Table from '@material-ui/core/Table';
 import { Paper, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import { TableSettingsModal } from '../components/TableSettingsModal';
 import { flatten, has, keys, map, mapKeys } from 'lodash';
-import { Teams } from '../data/team';
-import { calculations } from '../data/calculations';
+import { Teams } from '@robot-analytics/data/team';
+import { calculations } from '@robot-analytics/data/calculations';
 import { connect } from 'react-redux';
-import { AppState } from '../state/state';
-import { take } from '../utils';
+import { AppState } from '@robot-analytics/state/state';
+import { take } from '@robot-analytics/utils';
 
 export const TableView = connect(
     (state: AppState) => ({ teams: state.teams })

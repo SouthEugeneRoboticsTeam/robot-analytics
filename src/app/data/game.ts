@@ -1,4 +1,4 @@
-import { Metrics } from './metric';
+import { Metrics } from '@robot-analytics/data/metric';
 
 export interface Games {
     [name: string]: Game

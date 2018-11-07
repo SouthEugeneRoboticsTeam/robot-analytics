@@ -1,4 +1,4 @@
-import { Scouts } from './scout'
+import { Scouts } from '@robot-analytics/data/scout'
 
 export interface Teams {
     [number: number]: Team

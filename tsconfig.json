@@ -8,7 +8,11 @@
     "jsx": "react",
     "baseUrl": "./src",
     "paths": {
-      "@robot-analytics/*": ["/*"]
+      "@robot-analytics/components*": ["app/components/*"],
+      "@robot-analytics/data*": ["app/data/*"],
+      "@robot-analytics/routes*": ["app/routes/*"],
+      "@robot-analytics/state*": ["app/state/*"],
+      "@robot-analytics/*": ["app/*"]
     }
   },
   "include": [
