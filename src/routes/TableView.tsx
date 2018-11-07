@@ -54,7 +54,7 @@ export const TableView = connect(
                             <TableRow>
                                 <TableCell>Team Name</TableCell>
                                 <TableCell>Team Number</TableCell>
-                                {...calculationSettings.map(setting => (
+                                {map(calculationSettings, setting => (
                                     <TableCell key={`${setting.metricName}-${setting.calculationName}`}>
                                         {`${setting.metricName} (${setting.calculationName})`}
                                     </TableCell>
