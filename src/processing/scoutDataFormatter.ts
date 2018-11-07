@@ -12,7 +12,7 @@ function formatScout(scoutData: object, gameName:string) {
     // Finds all the different sections in the scout data and stores them in an array
     var allScoutSections: Array<string> = []
     for (var metric in scoutMetrics) {
-        if (!allScoutSections.includes(scoutMetrics[metric]['category'])){
+        if (!(scoutMetrics[metric]['category'] in allScoutSections)){
             allScoutSections.push(scoutMetrics[metric]['category'])
         }
     }
