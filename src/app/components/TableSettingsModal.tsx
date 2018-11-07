@@ -15,10 +15,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import { Button, withMobileDialog } from '@material-ui/core';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { reduce, forEach, map, mapKeys, mapValues, isEmpty, keys } from 'lodash';
-import { Teams } from '../data/team';
-import { Games } from '../data/game';
-import { calculations } from '../data/calculations';
-import { CalculationSetting } from '../routes/TableView';
+import { Teams } from '@robot-analytics/data/team';
+import { Games } from '@robot-analytics/data/game';
+import { calculations } from '@robot-analytics/data/calculations';
+import { CalculationSetting } from '@robot-analytics/routes/TableView';
 
 const styles = (theme: Theme) => createStyles({
     selectContainer: {

@@ -17,7 +17,7 @@ import { Switch, Route } from 'react-router-dom'
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles'
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
-import { NavigationItem } from '../components/NavigationItem';
+import { NavigationItem } from '@robot-analytics/components/NavigationItem';
 
 const drawerWidth = 240;
 
