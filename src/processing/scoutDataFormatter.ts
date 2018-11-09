@@ -1,6 +1,6 @@
-import { addTeam, addScout } from '../state/actions'
-import { store } from '../state/store'
-import { ScoutSections } from '../data/scout'
+import { addTeam, addScout } from '@robot-analytics/state/actions'
+import { store } from '@robot-analytics/state/store'
+import { ScoutSections } from '@robot-analytics/data/scout'
 
 // Takes one object of raw scout data from one match. Will return a formatted object of the same data
 function formatScout(scoutData: any, gameName:string) {
