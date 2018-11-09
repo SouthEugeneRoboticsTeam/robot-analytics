@@ -1,7 +1,7 @@
 import { addTeams } from './scoutDataFormatter'
 // TODO: JSON importinng through UI
 import * as data from './scout.json'
-import { store } from '../state/store'
+import { store } from '@robot-analytics/state/store'
 
 // TODO: Maybe make changing this possible through the UI
 const preferences = {
