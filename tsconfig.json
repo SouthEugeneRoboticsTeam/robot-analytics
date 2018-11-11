@@ -7,6 +7,7 @@
     "target": "es5",
     "jsx": "react",
     "baseUrl": "./src",
+    "resolveJsonModule": true,
     "paths": {
       "@robot-analytics/components*": ["app/components/*"],
       "@robot-analytics/data*": ["app/data/*"],
