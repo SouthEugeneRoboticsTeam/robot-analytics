@@ -12,12 +12,14 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import AccoutCircleIcon from '@material-ui/icons/AccountCircle';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import TableChartIcon from '@material-ui/icons/TableChart';
+import ImportExport from '@material-ui/icons/ImportExport'
 import { TableView } from './TableView';
 import { Switch, Route } from 'react-router-dom'
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles'
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 import { NavigationItem } from '@robot-analytics/components/NavigationItem';
+import { Icon } from '@material-ui/core';
 
 const drawerWidth = 240;
 
@@ -97,12 +99,17 @@ const styles = (theme: Theme) => createStyles({
 export const Home = withStyles(styles)(
     class extends React.Component<HomeProps, HomeState> {
         state = {
-            drawerOpened: false
+            drawerOpened: false,
+            importFiles: false
         };
 
         handleDrawerOpen = () => this.setState({ drawerOpened: true });
 
         handleDrawerClose = () => this.setState({ drawerOpened: false });
+
+        handleFileUpload = (event:any) => console.log(event.target.files[0])
+
+        fileUploader:HTMLInputElement
 
         render() {
             const { classes } = this.props;
@@ -155,6 +162,12 @@ export const Home = withStyles(styles)(
                             <IconButton color="inherit">
                                 <AccoutCircleIcon />
                             </IconButton>
+                            <input id="myInput" type="file" ref={(ref) => this.fileUploader = ref} style={{display: 'none' }} onChange={this.handleFileUpload}/>                
+                            <IconButton
+                            color="inherit"
+                            onClick={(e) => this.fileUploader.click()}>
+                                <ImportExport />
+                            </IconButton>
                         </Toolbar>
                     </AppBar>
                     <main className={classes.content}>
@@ -173,5 +186,6 @@ export const Home = withStyles(styles)(
 interface HomeProps extends WithStyles<typeof styles> {}
 
 interface HomeState {
-    drawerOpened: boolean
+    drawerOpened: boolean,
+    importFiles: boolean
 }
