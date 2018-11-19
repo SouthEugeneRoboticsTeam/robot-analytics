@@ -19,7 +19,8 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles'
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 import { NavigationItem } from '@robot-analytics/components/NavigationItem';
-import { Icon } from '@material-ui/core';
+import { addTeams } from '@robot-analytics/processing/scoutFormatter'
+import { store } from '@robot-analytics/state/store'
 
 const drawerWidth = 240;
 
@@ -100,17 +101,24 @@ export const Home = withStyles(styles)(
     class extends React.Component<HomeProps, HomeState> {
         state = {
             drawerOpened: false,
-            importFiles: false
         };
 
         handleDrawerOpen = () => this.setState({ drawerOpened: true });
 
         handleDrawerClose = () => this.setState({ drawerOpened: false });
-
-        handleFileUpload = (event:any) => console.log(event.target.files[0])
-
+        
         fileUploader:HTMLInputElement
-
+        // Reads and parses the imported JSON file and adds it to the state
+        handleFileUpload = (event:any) => {
+                            var reader = new FileReader()
+                            reader.readAsText(event.target.files[0])
+                            // TODO: Have user specify which game they're importing data from
+                            reader.onload = (event:any) => {addTeams(JSON.parse(event.target.result).teams,'frc2018-powerup')
+                                                            // Logs the state to the console
+                                                            console.log(store.getState()) 
+                                                        }
+                        }
+        
         render() {
             const { classes } = this.props;
             const { drawerOpened } = this.state;
@@ -162,10 +170,10 @@ export const Home = withStyles(styles)(
                             <IconButton color="inherit">
                                 <AccoutCircleIcon />
                             </IconButton>
-                            <input id="myInput" type="file" ref={(ref) => this.fileUploader = ref} style={{display: 'none' }} onChange={this.handleFileUpload}/>                
+                            <input id="dataImport" type="file" accept='.json' ref={(ref) => this.fileUploader = ref} style={{display: 'none' }} onChange={this.handleFileUpload}/>                
                             <IconButton
                             color="inherit"
-                            onClick={(e) => this.fileUploader.click()}>
+                            onClick={() => this.fileUploader.click()}>
                                 <ImportExport />
                             </IconButton>
                         </Toolbar>
@@ -187,5 +195,4 @@ interface HomeProps extends WithStyles<typeof styles> {}
 
 interface HomeState {
     drawerOpened: boolean,
-    importFiles: boolean
 }
