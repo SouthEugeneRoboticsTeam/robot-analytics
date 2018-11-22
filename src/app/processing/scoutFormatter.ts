@@ -1,6 +1,7 @@
 import { addTeam, addScout } from '@robot-analytics/state/actions'
 import { store } from '@robot-analytics/state/store'
 import { ScoutSections } from '@robot-analytics/data/scout'
+
 // Takes one object of raw scout data from one match. Will return a formatted object of the same data
 function formatScout(scoutData: any, gameName:string) {
     const scoutMetrics = scoutData['metrics']
@@ -32,6 +33,7 @@ function formatScout(scoutData: any, gameName:string) {
         sections: formattedMetrics
     }
 }
+
 // Add teams and their scouts to the state
 // TODO: Use TBA to include team name in state instead of team number
 export function addTeams(allTeams: any, gameName:string) {
