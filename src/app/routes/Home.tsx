@@ -100,24 +100,22 @@ const styles = (theme: Theme) => createStyles({
 export const Home = withStyles(styles)(
     class extends React.Component<HomeProps, HomeState> {
         state = {
-            drawerOpened: false,
+            drawerOpened: false
         };
 
         handleDrawerOpen = () => this.setState({ drawerOpened: true });
 
         handleDrawerClose = () => this.setState({ drawerOpened: false });
-        
-        fileUploader:HTMLInputElement
+
+        // TODO: find better way of using input element
+        fileUploader: HTMLInputElement;
         // Reads and parses the imported JSON file and adds it to the state
         handleFileUpload = (event:any) => {
-                            var reader = new FileReader()
-                            reader.readAsText(event.target.files[0])
-                            // TODO: Have user specify which game they're importing data from
-                            reader.onload = (event:any) => {addTeams(JSON.parse(event.target.result).teams,'frc2018-powerup')
-                                                            // Logs the state to the console
-                                                            console.log(store.getState()) 
-                                                        }
-                        }
+            const reader = new FileReader();
+            reader.readAsText(event.target.files[0]);
+            // TODO: Have user specify which game they're importing data from
+            reader.onload = (event: any) => addTeams(JSON.parse(event.target.result).teams,'frc2018-powerup')
+        };
         
         render() {
             const { classes } = this.props;
@@ -170,7 +168,7 @@ export const Home = withStyles(styles)(
                             <IconButton color="inherit">
                                 <AccoutCircleIcon />
                             </IconButton>
-                            <input id="dataImport" type="file" accept='.json' ref={(ref) => this.fileUploader = ref} style={{display: 'none' }} onChange={this.handleFileUpload}/>                
+                            <input id="dataImport" type="file" accept='.json' ref={(ref) => this.fileUploader = ref} style={{display: 'none' }} onChange={this.handleFileUpload}/>
                             <IconButton
                             color="inherit"
                             onClick={() => this.fileUploader.click()}>
