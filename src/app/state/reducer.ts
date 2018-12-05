@@ -4,6 +4,8 @@ import { Teams } from '../data/team';
 import { Games } from '../data/game';
 import { ActionTypes } from './actions';
 import * as actions from './actions';
+import { map, reduce } from 'lodash';
+import { processRsTeams } from '@robot-analytics/processing/scoutFormatter';
 
 const teams = (state: Teams = {}, action: ActionType<typeof actions>) => {
     switch (action.type) {
@@ -21,6 +23,9 @@ const teams = (state: Teams = {}, action: ActionType<typeof actions>) => {
                     }
                 }
             }
+        }
+        case ActionTypes.IMPORT_RS_DATA: {
+            return processRsTeams(action.payload.teams)
         }
         default: return state;
     }
