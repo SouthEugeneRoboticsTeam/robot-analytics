@@ -25,7 +25,10 @@ const teams = (state: Teams = {}, action: ActionType<typeof actions>) => {
             }
         }
         case ActionTypes.IMPORT_RS_DATA: {
-            return processRsTeams(action.payload.teams)
+            return {
+                ...state,
+                ...processRsTeams(action.payload.teams)
+            }
         }
         default: return state;
     }
