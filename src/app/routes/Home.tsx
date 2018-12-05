@@ -9,15 +9,18 @@ import List from '@material-ui/core/List';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import SettingsIcon from '@material-ui/icons/Settings';
-import AccoutCircleIcon from '@material-ui/icons/AccountCircle';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import TableChartIcon from '@material-ui/icons/TableChart';
+import ImportExport from '@material-ui/icons/ImportExport'
 import { TableView } from './TableView';
 import { Switch, Route } from 'react-router-dom'
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles'
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 import { NavigationItem } from '@robot-analytics/components/NavigationItem';
+import { store } from '@robot-analytics/state/store'
+import { importRsData } from '@robot-analytics/stateactions';
 
 const drawerWidth = 240;
 
@@ -104,6 +107,17 @@ export const Home = withStyles(styles)(
 
         handleDrawerClose = () => this.setState({ drawerOpened: false });
 
+        // TODO: find better way of using input element (low priority)
+        fileUploader: HTMLInputElement;
+        // Reads and parses the imported JSON file and adds it to the state
+        handleFileUpload = (event:any) => {
+            const reader = new FileReader();
+            reader.readAsText(event.target.files[0]);
+            reader.onload = (event: any) => {
+                store.dispatch(importRsData(JSON.parse(event.target.result)));
+            }
+        };
+        
         render() {
             const { classes } = this.props;
             const { drawerOpened } = this.state;
@@ -153,7 +167,13 @@ export const Home = withStyles(styles)(
                                 <SettingsIcon />
                             </IconButton>
                             <IconButton color="inherit">
-                                <AccoutCircleIcon />
+                                <AccountCircleIcon />
+                            </IconButton>
+                            <input id="dataImport" type="file" accept='.json' ref={(ref) => this.fileUploader = ref} style={{display: 'none' }} onChange={this.handleFileUpload}/>
+                            <IconButton
+                            color="inherit"
+                            onClick={() => this.fileUploader.click()}>
+                                <ImportExport />
                             </IconButton>
                         </Toolbar>
                     </AppBar>
@@ -173,5 +193,5 @@ export const Home = withStyles(styles)(
 interface HomeProps extends WithStyles<typeof styles> {}
 
 interface HomeState {
-    drawerOpened: boolean
+    drawerOpened: boolean,
 }
