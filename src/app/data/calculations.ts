@@ -21,7 +21,11 @@ export const calculations: Calculations = {
     },
     'Minimum': {
         type: ScoutMetricType.NUMBER,
-        invoke: (...metrics: Array<Metric>) => metrics[0]
+        invoke: (...metrics: Array<Metric>) => reduce(metrics, function(acc: Metric, metric) {
+            if (metric.value > -1 && acc.value == -1) acc.value = metric.value
+            else if (metric.value < acc.value) acc.value = metric.value
+            return acc
+          }, {type: ScoutMetricType.NUMBER, value: -1})
     },
     'Average': {
         type: ScoutMetricType.NUMBER,
