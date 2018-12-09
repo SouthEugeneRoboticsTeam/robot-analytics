@@ -29,7 +29,9 @@ export const calculations: Calculations = {
     },
     'Average': {
         type: ScoutMetricType.NUMBER,
-        invoke: (...metrics: Array<Metric>) => metrics[0]
+        invoke: (...metrics: Array<Metric>) => ({type:ScoutMetricType.NUMBER, value: reduce(metrics, function (acc, metric){ 
+            return acc + metric.value}, 0) / metrics.length
+        })
     },
     'Standard Deviation': {
         type: ScoutMetricType.NUMBER,
