@@ -1,6 +1,7 @@
 import { Metric, ScoutMetricType } from '@robot-analytics/data/metric';
 import { reduce } from 'lodash';
 import { number } from 'prop-types';
+import { std } from 'mathjs'
 
 export type Calculations = {
     [name: string]: Calculation
@@ -35,6 +36,9 @@ export const calculations: Calculations = {
     },
     'Standard Deviation': {
         type: ScoutMetricType.NUMBER,
-        invoke: (...metrics: Array<Metric>) => metrics[0]
+        invoke: (...metrics: Array<Metric>) => ({type: ScoutMetricType.NUMBER, value: std(reduce(metrics, function(acc, metric) { 
+            acc.push(metric.value)
+            return acc
+            }, []))})
     }
 };
