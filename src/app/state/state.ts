@@ -1,8 +1,8 @@
 import { DeepReadonly } from 'utility-types';
 import { Teams } from '../data/team';
-import { Games } from '../data/game';
+import { Metrics } from '@robot-analytics/datametric';
 
 export type AppState = DeepReadonly<{
-    teams: Teams
-    games: Games
-}>
+    teams: Teams,
+    metrics: Metrics
+}>;

@@ -1,6 +1,5 @@
 import { Metric, ScoutMetricType } from '@robot-analytics/data/metric';
 import { reduce } from 'lodash';
-import { number } from 'prop-types';
 import { std } from 'mathjs'
 
 export type Calculations = {
@@ -18,7 +17,7 @@ export const calculations: Calculations = {
         invoke: (...metrics: Array<Metric>) => reduce(metrics, function (acc: Metric, metric) {
             if (metric.value > acc.value) acc.value = metric.value
             return acc
-        }, { type: ScoutMetricType.NUMBER, value: 0 })
+        }, { type: ScoutMetricType.NUMBER, value: 0, category:"Teleop"})
     },
     'Minimum': {
         type: ScoutMetricType.NUMBER,
@@ -26,12 +25,12 @@ export const calculations: Calculations = {
             if (metric.value > -1 && acc.value == -1) acc.value = metric.value
             else if (metric.value < acc.value) acc.value = metric.value
             return acc
-          }, {type: ScoutMetricType.NUMBER, value: -1})
+          }, {type: ScoutMetricType.NUMBER, value: -1, category:"Teleop"})
     },
     'Average': {
         type: ScoutMetricType.NUMBER,
         invoke: (...metrics: Array<Metric>) => ({type:ScoutMetricType.NUMBER, value: reduce(metrics, function (acc, metric){ 
-            return acc + metric.value}, 0) / metrics.length
+            return acc + metric.value}, 0) / metrics.length, category:"Teleop"
         })
     },
     'Standard Deviation': {
@@ -39,6 +38,6 @@ export const calculations: Calculations = {
         invoke: (...metrics: Array<Metric>) => ({type: ScoutMetricType.NUMBER, value: std(reduce(metrics, function(acc, metric) { 
             acc.push(metric.value)
             return acc
-            }, []))})
+            }, [])), category:"Teleop"})
     }
 };

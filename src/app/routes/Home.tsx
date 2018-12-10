@@ -20,7 +20,8 @@ import createStyles from '@material-ui/core/styles/createStyles'
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 import { NavigationItem } from '@robot-analytics/components/NavigationItem';
 import { store } from '@robot-analytics/state/store'
-import { importRsData } from '@robot-analytics/stateactions';
+import { addData } from '@robot-analytics/stateactions';
+import { processRsData } from '@robot-analytics/processingscoutFormatter';
 
 const drawerWidth = 240;
 
@@ -114,7 +115,7 @@ export const Home = withStyles(styles)(
             const reader = new FileReader();
             reader.readAsText(event.target.files[0]);
             reader.onload = (event: any) => {
-                store.dispatch(importRsData(JSON.parse(event.target.result)));
+                store.dispatch(addData(processRsData(JSON.parse(event.target.result))));
             }
         };
         

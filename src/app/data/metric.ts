@@ -5,6 +5,7 @@ export interface Metrics {
 export interface Metric<T = any> {
     type: ScoutMetricType
     value: T
+    category: string
 }
 
 export enum ScoutMetricType {
