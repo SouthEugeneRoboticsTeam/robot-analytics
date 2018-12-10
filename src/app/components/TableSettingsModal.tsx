@@ -3,8 +3,6 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -16,9 +14,9 @@ import { Button, withMobileDialog } from '@material-ui/core';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { reduce, forEach, map, mapKeys, mapValues, isEmpty, keys } from 'lodash';
 import { Teams } from '@robot-analytics/data/team';
-import { Games } from '@robot-analytics/data/game';
 import { calculations } from '@robot-analytics/data/calculations';
 import { CalculationSetting } from '@robot-analytics/routes/TableView';
+import { Metrics } from '@robot-analytics/datametric';
 
 const styles = (theme: Theme) => createStyles({
     selectContainer: {
@@ -41,16 +39,14 @@ export const TableSettingsModal = compose(
 )(
     class extends React.Component<TableSettingsModalConnectProps, TableSettingsModalState> {
         state: TableSettingsModalState = {
-            gameName: (games => !isEmpty(games) ? keys(games)[0] : '')(this.props.games),
             metricCheckboxes: {}
         };
 
         handleModalAccept = () => {
             const { handleModalClose, configureTable } = this.props;
-            const { gameName, metricCheckboxes } = this.state;
+            const { metricCheckboxes } = this.state;
             handleModalClose();
             configureTable(
-                gameName,
                 reduce(metricCheckboxes, (result: Array<CalculationSetting>, metricCheckbox, metricName) => {
                     if (metricCheckbox.checked) {
                         forEach(metricCheckbox.calculationCheckboxes, (calculationCheckbox, calculationName) => {
@@ -62,12 +58,6 @@ export const TableSettingsModal = compose(
                     return result;
                 }, [])
             );
-        };
-
-        handleGameChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-            if (event.target.value !== this.state.gameName) {
-                this.setState({ gameName: event.target.value })
-            }
         };
 
         handleMetricChange = (metric: string) => () => {
@@ -97,29 +87,25 @@ export const TableSettingsModal = compose(
             })
         };
 
-        componentWillMount() {
-            const { games } = this.props;
-            const { gameName } = this.state;
-            const game = games[gameName];
-            if (game != null) {
-                this.setState({
-                    metricCheckboxes: reduce(game.metrics, (result: MetricCheckboxes, metric, metricName) => {
-                        result[metricName] = {
-                            checked: false,
-                            calculationCheckboxes: reduce(calculations, (result: CalculationCheckboxes, calculation, calculationName) => {
-                                result[calculationName] = false;
-                                return result;
-                            }, {})
-                        };
-                        return result;
-                    }, {})
-                })
-            }
+        componentWillReceiveProps(nextProps: Readonly<TableSettingsModalConnectProps>) {
+            const { metrics } = nextProps;
+            this.setState({
+                metricCheckboxes: reduce(metrics, (result: MetricCheckboxes, metric, metricName) => {
+                    result[metricName] = {
+                        checked: false,
+                        calculationCheckboxes: reduce(calculations, (result: CalculationCheckboxes, calculation, calculationName) => {
+                            result[calculationName] = false;
+                            return result;
+                        }, {})
+                    };
+                    return result;
+                }, {})
+            })
         }
 
         render() {
-            const { games, classes, isModalOpen, handleModalClose, fullScreen } = this.props;
-            const { gameName, metricCheckboxes } = this.state;
+            const { metrics, classes, isModalOpen, handleModalClose, fullScreen } = this.props;
+            const { metricCheckboxes } = this.state;
             return (
                 <Dialog
                     open={isModalOpen}
@@ -128,17 +114,8 @@ export const TableSettingsModal = compose(
                     fullScreen={fullScreen}
                 >
                     <DialogHeader>Table Settings</DialogHeader>
-                    <div className={classes.selectContainer}>
-                        <Select value={gameName} onChange={this.handleGameChange}>
-                            {map(games, (game, gameName) => (
-                                <MenuItem key={gameName} value={gameName}>
-                                    {gameName}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </div>
                     <DialogContent className={classes.checkboxContainer}>
-                        {map((games[gameName] != null ? games[gameName].metrics : {}), (metric, metricName) => (
+                        {map(metrics, (metric, metricName) => (
                             <div key={metricName}>
                                 <FormControlLabel
                                     control={<Checkbox
@@ -180,19 +157,18 @@ export const TableSettingsModal = compose(
 );
 
 export interface TableSettingsModalProps {
-    configureTable: (gameName: string, calculations: Array<CalculationSetting>) => void
+    configureTable: (calculations: Array<CalculationSetting>) => void
     isModalOpen: boolean
     handleModalClose: () => void
 }
 
 export interface TableSettingsModalConnectProps extends WithStyles<typeof styles>, TableSettingsModalProps {
-    teams: Teams
-    games: Games
+    teams: Teams,
+    metrics: Metrics
     fullScreen: boolean
 }
 
 export interface TableSettingsModalState {
-    gameName: string
     metricCheckboxes: MetricCheckboxes
 }
 

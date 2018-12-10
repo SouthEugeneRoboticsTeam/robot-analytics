@@ -5,12 +5,11 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import Table from '@material-ui/core/Table';
 import { Paper, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import { TableSettingsModal } from '../components/TableSettingsModal';
-import { flatten, has, keys, map, mapKeys } from 'lodash';
+import { flatten, has, keys, map, mapKeys, reduce, filter } from 'lodash';
 import { Teams } from '@robot-analytics/data/team';
 import { calculations } from '@robot-analytics/data/calculations';
 import { connect } from 'react-redux';
 import { AppState } from '@robot-analytics/state/state';
-import { take } from '@robot-analytics/utils';
 
 export const TableView = connect(
     (state: AppState) => ({ teams: state.teams })
@@ -22,8 +21,8 @@ export const TableView = connect(
         calculationSettings: []
     };
 
-    configureTable = (gameName: string, calculationSettings: Array<CalculationSetting>) => {
-        this.setState({ gameName, calculationSettings });
+    configureTable = (calculationSettings: Array<CalculationSetting>) => {
+        this.setState({ calculationSettings });
     };
 
     handleModalOpen = () => {
@@ -68,13 +67,10 @@ export const TableView = connect(
                                     <TableCell>{teamNumber}</TableCell>
                                     {map(calculationSettings, setting => (
                                         <TableCell key={`${setting.metricName}-${setting.calculationName}`}>
-                                            {`${calculations[take(setting.calculationName, c => {
-                                                console.log(c);
-                                                return c
-                                            })].invoke(
-                                                ...flatten(map(team.scouts, scout => (
-                                                    map(scout.sections, section => section.metrics[setting.metricName])
-                                                )))
+                                            {`${calculations[setting.calculationName].invoke(
+                                                ...map(team.scouts, scout => (
+                                                    scout.metrics[setting.metricName]
+                                                ))
                                             ).value}`}
                                         </TableCell>
                                     ))}
