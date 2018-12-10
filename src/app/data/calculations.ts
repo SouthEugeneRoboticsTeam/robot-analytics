@@ -1,6 +1,6 @@
 import { Metric, ScoutMetricType } from '@robot-analytics/data/metric';
 import { reduce } from 'lodash';
-import { std } from 'mathjs'
+import { std, round } from 'mathjs'
 
 export type Calculations = {
     [name: string]: Calculation
@@ -29,15 +29,15 @@ export const calculations: Calculations = {
     },
     'Average': {
         type: ScoutMetricType.NUMBER,
-        invoke: (...metrics: Array<Metric>) => ({type:ScoutMetricType.NUMBER, value: reduce(metrics, function (acc, metric){ 
-            return acc + metric.value}, 0) / metrics.length, category:"Teleop"
+        invoke: (...metrics: Array<Metric>) => ({type:ScoutMetricType.NUMBER, value: round(reduce(metrics, function (acc, metric){ 
+            return acc + metric.value}, 0) / metrics.length, 2), category:"Teleop"
         })
     },
     'Standard Deviation': {
         type: ScoutMetricType.NUMBER,
-        invoke: (...metrics: Array<Metric>) => ({type: ScoutMetricType.NUMBER, value: std(reduce(metrics, function(acc, metric) { 
+        invoke: (...metrics: Array<Metric>) => ({type: ScoutMetricType.NUMBER, value: round(std(reduce(metrics, function(acc, metric) { 
             acc.push(metric.value)
             return acc
-            }, [])), category:"Teleop"})
+            }, [])), 2), category:"Teleop"})
     }
 };
