@@ -14,11 +14,15 @@ export interface Calculation<T = any> {
 export const calculations: Calculations = {
     'Maximum': {
         type: ScoutMetricType.NUMBER,
-        invoke: (...metrics: Array<Metric>) => ({
+        invoke: (...metrics: Array<Metric>) => {
+            console.log(metrics)
+            console.log(metrics[0])
+            return {
             type: ScoutMetricType.NUMBER,
             value: max(metrics.map((metric) => metric.value)),
             category: metrics[0].category,
-        }),
+            }
+        },
     },
     'Minimum': {
         type: ScoutMetricType.NUMBER,
