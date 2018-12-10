@@ -94,7 +94,9 @@ export const TableSettingsModal = compose(
                     result[metricName] = {
                         checked: false,
                         calculationCheckboxes: reduce(calculations, (result: CalculationCheckboxes, calculation, calculationName) => {
-                            result[calculationName] = false;
+                            if (metric.type === calculation.type) {
+                                result[calculationName] = false;
+                            }
                             return result;
                         }, {})
                     };
@@ -127,17 +129,20 @@ export const TableSettingsModal = compose(
                                 />
                                 <FormGroup className={classes.nestedCheckboxes}
                                            style={{ display: metricCheckboxes[metricName].checked ? null : 'none' }}>
-                                    {map(calculations, (calculation, calculationName) => (
-                                        <FormControlLabel
-                                            control={<Checkbox
+                                    {reduce(calculations, (relativeCalculations, calculation, calculationName) => {
+                                        if (calculation.type === metric.type) {
+                                            relativeCalculations.push(<FormControlLabel
+                                                control={<Checkbox
                                                     checked={metricCheckboxes[metricName].calculationCheckboxes[calculationName]}
                                                     onChange={this.handleCalculationChange(metricName, calculationName)}
                                                     color="primary"
-                                            />}
-                                            label={calculationName}
-                                            key={calculationName}
-                                        />
-                                    ))}
+                                                />}
+                                                label={calculationName}
+                                                key={calculationName}
+                                            />)
+                                        }
+                                        return relativeCalculations
+                                    }, [])}
                                 </FormGroup>
                             </div>
                         ))}
