@@ -1,5 +1,5 @@
 import { Metric, ScoutMetricType } from '@robot-analytics/data/metric';
-import { reduce } from 'lodash';
+import { reduce, map } from 'lodash';
 
 export type Calculations = {
     [name: string]: Calculation

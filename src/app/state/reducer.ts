@@ -1,11 +1,10 @@
 import { combineReducers } from 'redux';
 import { ActionType } from 'typesafe-actions';
 import { Teams } from '../data/team';
-import { Games } from '../data/game';
 import { ActionTypes } from './actions';
 import * as actions from './actions';
 import { map, reduce } from 'lodash';
-import { processRsTeams } from '@robot-analytics/processing/scoutFormatter';
+import { Metrics } from '@robot-analytics/datametric';
 
 const teams = (state: Teams = {}, action: ActionType<typeof actions>) => {
     switch (action.type) {
@@ -24,23 +23,26 @@ const teams = (state: Teams = {}, action: ActionType<typeof actions>) => {
                 }
             }
         }
-        case ActionTypes.IMPORT_RS_DATA: {
+        case ActionTypes.ADD_DATA: {
             return {
                 ...state,
-                ...processRsTeams(action.payload.teams)
+                ...action.payload.teams
             }
         }
         default: return state;
     }
 };
 
-const games = (state: Games = {}, action: ActionType<typeof actions>) => {
+const metrics = (state: Metrics = {}, action: ActionType<typeof actions>) => {
     switch (action.type) {
-        case ActionTypes.ADD_GAME: {
-            return { ...state, [action.payload.name]: { metrics: action.payload.metrics } }
+        case ActionTypes.ADD_DATA: {
+            return {
+                ...state,
+                ...action.payload.metrics
+            }
         }
         default: return state
     }
 };
 
-export const reducer = combineReducers({ teams, games });
+export const reducer = combineReducers({ teams, metrics });
