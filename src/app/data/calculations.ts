@@ -1,6 +1,6 @@
 import { Metric, ScoutMetricType } from '@robot-analytics/data/metric';
 import { reduce } from 'lodash';
-import { std, round, median } from 'mathjs';
+import { std, round, median, mode } from 'mathjs';
 
 export type Calculations = {
     [name: string]: Calculation
@@ -45,6 +45,13 @@ export const calculations: Calculations = {
         invoke: (...metrics: Array<Metric>) => ({type: ScoutMetricType.NUMBER, value: median(reduce(metrics, (acc, metric) => {
             acc.push(metric.value)
             return acc
-        }, [])), category:metrics[0].category})
+        }, [])), category: metrics[0].category})
+    },
+    'Mode': {
+        type: ScoutMetricType.NUMBER,
+        invoke: (...metrics: Array<Metric>) => ({type: ScoutMetricType.NUMBER, value: mode(reduce(metrics, (acc, metric) => {
+            acc.push(metric.value)
+            return acc
+        }, [])), category: metrics[0].category})
     }
 };
