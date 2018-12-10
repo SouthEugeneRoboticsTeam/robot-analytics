@@ -1,6 +1,6 @@
 import { Metric, ScoutMetricType } from '@robot-analytics/data/metric';
 import { reduce } from 'lodash';
-import { std, round, median, mode } from 'mathjs';
+import { std, round, median, mode, max, min } from 'mathjs';
 
 export type Calculations = {
     [name: string]: Calculation
@@ -14,10 +14,11 @@ export interface Calculation<T = any> {
 export const calculations: Calculations = {
     'Maximum': {
         type: ScoutMetricType.NUMBER,
-        invoke: (...metrics: Array<Metric>) => reduce(metrics, (acc: Metric, metric) => {
-            if (metric.value > acc.value) acc.value = metric.value
-            return acc
-        }, { type: ScoutMetricType.NUMBER, value: 0, category: metrics[0].category})
+        invoke: (...metrics: Array<Metric>) => ({
+            type: ScoutMetricType.NUMBER,
+            value: max(metrics.map((metric) => metric.value})),
+            category: metrics[0].category,
+        })
     },
     'Minimum': {
         type: ScoutMetricType.NUMBER,
