@@ -19,7 +19,7 @@ export const calculations: Calculations = {
             console.log(metrics[0])
             return {
             type: ScoutMetricType.NUMBER,
-            value: max(metrics.map((metric) => metric.value)),
+            value: max(metrics.filter((metric) => !!metric).map((metric) => metric.value)),
             category: metrics[0].category,
             }
         },
@@ -28,7 +28,7 @@ export const calculations: Calculations = {
         type: ScoutMetricType.NUMBER,
         invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
-            value: min(metrics.map((metric) => metric.value)),
+            value: min(metrics.filter((metric) => !!metric).map((metric) => metric.value)),
             category: metrics[0].category,
         }),
     },
@@ -36,7 +36,7 @@ export const calculations: Calculations = {
         type: ScoutMetricType.NUMBER,
         invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
-            value: mean(metrics.map((metric) => metric.value)),
+            value: mean(metrics.filter((metric) => !!metric).map((metric) => metric.value)),
             category: metrics[0].category,
         }),
     },
@@ -44,7 +44,7 @@ export const calculations: Calculations = {
         type: ScoutMetricType.NUMBER,
         invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
-            value: std(metrics.map((metric) => metric.value)),
+            value: std(metrics.filter((metric) => !!metric).map((metric) => metric.value)),
             category: metrics[0].category,
         }),
     },
@@ -52,7 +52,7 @@ export const calculations: Calculations = {
         type: ScoutMetricType.NUMBER,
         invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
-            value: median(metrics.map((metric) => metric.value)),
+            value: median(metrics.filter((metric) => !!metric).map((metric) => metric.value)),
             category: metrics[0].category,
         }),
     },
@@ -60,7 +60,7 @@ export const calculations: Calculations = {
         type: ScoutMetricType.NUMBER,
         invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
-            value: mode(metrics.map((metric) => metric.value)),
+            value: mode(metrics.filter((metric) => !!metric).map((metric) => metric.value)),
             category: metrics[0].category,
         }),
     }
