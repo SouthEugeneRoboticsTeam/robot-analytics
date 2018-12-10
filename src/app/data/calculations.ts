@@ -14,15 +14,11 @@ export interface Calculation<T = any> {
 export const calculations: Calculations = {
     'Maximum': {
         type: ScoutMetricType.NUMBER,
-        invoke: (...metrics: Array<Metric>) => {
-            console.log(metrics)
-            console.log(metrics[0])
-            return {
+        invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
             value: max(metrics.filter((metric) => !!metric).map((metric) => metric.value)),
             category: metrics[0].category,
-            }
-        },
+        }),
     },
     'Minimum': {
         type: ScoutMetricType.NUMBER,
@@ -37,14 +33,6 @@ export const calculations: Calculations = {
         invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
             value: mean(metrics.filter((metric) => !!metric).map((metric) => metric.value)),
-            category: metrics[0].category,
-        }),
-    },
-    'Standard Deviation': {
-        type: ScoutMetricType.NUMBER,
-        invoke: (...metrics: Array<Metric>) => ({
-            type: ScoutMetricType.NUMBER,
-            value: std(metrics.filter((metric) => !!metric).map((metric) => metric.value)),
             category: metrics[0].category,
         }),
     },
@@ -63,5 +51,13 @@ export const calculations: Calculations = {
             value: mode(metrics.filter((metric) => !!metric).map((metric) => metric.value)),
             category: metrics[0].category,
         }),
-    }
+    },
+    'Standard Deviation': {
+        type: ScoutMetricType.NUMBER,
+        invoke: (...metrics: Array<Metric>) => ({
+            type: ScoutMetricType.NUMBER,
+            value: std(metrics.filter((metric) => !!metric).map((metric) => metric.value)),
+            category: metrics[0].category,
+        }),
+    },
 };
