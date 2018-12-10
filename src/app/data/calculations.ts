@@ -17,7 +17,7 @@ export const calculations: Calculations = {
         invoke: (...metrics: Array<Metric>) => reduce(metrics, function (acc: Metric, metric) {
             if (metric.value > acc.value) acc.value = metric.value
             return acc
-        }, { type: ScoutMetricType.NUMBER, value: 0, category:"Teleop"})
+        }, { type: ScoutMetricType.NUMBER, value: 0, category: metrics[0].category})
     },
     'Minimum': {
         type: ScoutMetricType.NUMBER,
@@ -25,12 +25,12 @@ export const calculations: Calculations = {
             if (metric.value > -1 && acc.value == -1) acc.value = metric.value
             else if (metric.value < acc.value) acc.value = metric.value
             return acc
-          }, {type: ScoutMetricType.NUMBER, value: -1, category:"Teleop"})
+          }, {type: ScoutMetricType.NUMBER, value: -1, category: metrics[0].category})
     },
     'Average': {
         type: ScoutMetricType.NUMBER,
         invoke: (...metrics: Array<Metric>) => ({type:ScoutMetricType.NUMBER, value: round(reduce(metrics, function (acc, metric){ 
-            return acc + metric.value}, 0) / metrics.length, 2), category:"Teleop"
+            return acc + metric.value}, 0) / metrics.length, 2), category: metrics[0].category
         })
     },
     'Standard Deviation': {
@@ -38,6 +38,6 @@ export const calculations: Calculations = {
         invoke: (...metrics: Array<Metric>) => ({type: ScoutMetricType.NUMBER, value: round(std(reduce(metrics, function(acc, metric) { 
             acc.push(metric.value)
             return acc
-            }, [])), 2), category:"Teleop"})
+            }, [])), 2), category: metrics[0].category})
     }
 };
