@@ -87,20 +87,29 @@ export const TableSettingsModal = compose(
             })
         };
 
-        componentWillReceiveProps(nextProps: Readonly<TableSettingsModalConnectProps>) {
-            const { metrics } = nextProps;
+        updateMetricCheckboxes = (metrics: Metrics) => {
             this.setState({
                 metricCheckboxes: reduce(metrics, (result: MetricCheckboxes, metric, metricName) => {
                     result[metricName] = {
                         checked: false,
                         calculationCheckboxes: reduce(calculations, (result: CalculationCheckboxes, calculation, calculationName) => {
-                            result[calculationName] = false;
+                            if (calculation.types.indexOf(metric.type) !== -1) {
+                                result[calculationName] = false;
+                            }
                             return result;
                         }, {})
                     };
                     return result;
                 }, {})
             })
+        };
+
+        componentWillMount() {
+            this.updateMetricCheckboxes(this.props.metrics);
+        }
+
+        componentWillReceiveProps(nextProps: Readonly<TableSettingsModalConnectProps>) {
+            this.updateMetricCheckboxes(nextProps.metrics);
         }
 
         render() {
@@ -127,17 +136,20 @@ export const TableSettingsModal = compose(
                                 />
                                 <FormGroup className={classes.nestedCheckboxes}
                                            style={{ display: metricCheckboxes[metricName].checked ? null : 'none' }}>
-                                    {map(calculations, (calculation, calculationName) => (
-                                        <FormControlLabel
-                                            control={<Checkbox
+                                    {reduce(calculations, (relativeCalculations, calculation, calculationName) => {
+                                        if (calculation.types.indexOf(metric.type) !== -1) {
+                                            relativeCalculations.push(<FormControlLabel
+                                                control={<Checkbox
                                                     checked={metricCheckboxes[metricName].calculationCheckboxes[calculationName]}
                                                     onChange={this.handleCalculationChange(metricName, calculationName)}
                                                     color="primary"
-                                            />}
-                                            label={calculationName}
-                                            key={calculationName}
-                                        />
-                                    ))}
+                                                />}
+                                                label={calculationName}
+                                                key={calculationName}
+                                            />)
+                                        }
+                                        return relativeCalculations
+                                    }, [])}
                                 </FormGroup>
                             </div>
                         ))}
