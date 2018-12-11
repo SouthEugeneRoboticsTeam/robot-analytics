@@ -6,25 +6,25 @@ export type Calculations = {
 }
 
 export interface Calculation<T = any> {
-    type: ScoutMetricType,
+    types: Array<ScoutMetricType>,
     invoke: (...metrics: Array<Metric<T>>) => Metric
 }
 
 export const calculations: Calculations = {
     'Maximum': {
-        type: ScoutMetricType.NUMBER,
+        types: [ScoutMetricType.NUMBER],
         invoke: (...metrics: Array<Metric>) => metrics[0]
     },
     'Minimum': {
-        type: ScoutMetricType.NUMBER,
+        types: [ScoutMetricType.NUMBER],
         invoke: (...metrics: Array<Metric>) => metrics[0]
     },
     'Average': {
-        type: ScoutMetricType.NUMBER,
+        types: [ScoutMetricType.NUMBER],
         invoke: (...metrics: Array<Metric>) => metrics[0]
     },
     'Standard Deviation': {
-        type: ScoutMetricType.NUMBER,
+        types: [ScoutMetricType.NUMBER],
         invoke: (...metrics: Array<Metric>) => metrics[0]
     }
 };
