@@ -87,8 +87,7 @@ export const TableSettingsModal = compose(
             })
         };
 
-        componentWillReceiveProps(nextProps: Readonly<TableSettingsModalConnectProps>) {
-            const { metrics } = nextProps;
+        updateMetricCheckboxes = (metrics: Metrics) => {
             this.setState({
                 metricCheckboxes: reduce(metrics, (result: MetricCheckboxes, metric, metricName) => {
                     result[metricName] = {
@@ -103,6 +102,14 @@ export const TableSettingsModal = compose(
                     return result;
                 }, {})
             })
+        };
+
+        componentWillMount() {
+            this.updateMetricCheckboxes(this.props.metrics);
+        }
+
+        componentWillReceiveProps(nextProps: Readonly<TableSettingsModalConnectProps>) {
+            this.updateMetricCheckboxes(nextProps.metrics);
         }
 
         render() {
