@@ -3,21 +3,44 @@ import { Teams } from '@robot-analytics/datateam';
 import { CalculationSetting } from '@robot-analytics/routesTableView';
 import { map } from 'lodash';
 import { calculations } from '@robot-analytics/datacalculations';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, withStyles, Theme, createStyles, WithStyles, Toolbar,
+    IconButton } from '@material-ui/core';
+import SettingsIcon from '@material-ui/icons/Settings';
 import { connect } from 'react-redux';
 import { AppState } from '@robot-analytics/statestate';
+import { compose } from 'redux';
 
-export const TableViewTable = connect(
-    (state: AppState, ownProps: TableConnectProps) => ({
-        teams: state.teams,
-        settings: ownProps.settings
-    })
+const styles = (theme: Theme) => createStyles({
+    toolbarSpacer: {
+        flex: '1 1 100%',
+    },
+    toolbarActions: {
+        color: theme.palette.text.secondary,
+    },
+});
+
+export const TableViewTable = compose(
+    connect(
+        (state: AppState, ownProps: TableConnectProps) => ({
+            teams: state.teams,
+            ...ownProps
+        })
+    ),
+    withStyles(styles)
 )(
     class extends React.Component<TableViewTableProps> {
         render() {
-            const { settings, teams } = this.props;
+            const { settings, teams, classes } = this.props;
             return (
                 <Paper style={{ overflowX: 'auto' }}>
+                    <Toolbar>
+                        <div className={classes.toolbarSpacer} />
+                        <div className={classes.toolbarActions}>
+                            <IconButton>
+                                <SettingsIcon/>
+                            </IconButton>
+                        </div>
+                    </Toolbar>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -58,6 +81,6 @@ interface TableConnectProps {
     settings: Array<CalculationSetting>
 }
 
-interface TableViewTableProps extends TableConnectProps{
+interface TableViewTableProps extends TableConnectProps, WithStyles<typeof styles> {
     teams: Teams
 }
