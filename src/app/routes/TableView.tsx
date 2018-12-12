@@ -2,19 +2,11 @@ import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import SettingsIcon from '@material-ui/icons/Settings';
-import Table from '@material-ui/core/Table';
-import { Paper, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import { TableSettingsModal } from '../components/TableSettingsModal';
 import { flatten, has, keys, map, mapKeys, reduce, filter } from 'lodash';
-import { Teams } from '@robot-analytics/data/team';
-import { calculations } from '@robot-analytics/data/calculations';
-import { connect } from 'react-redux';
-import { AppState } from '@robot-analytics/state/state';
+import { TableViewTable } from '@robot-analytics/componentsTableViewTable';
 
-export const TableView = connect(
-    (state: AppState) => ({ teams: state.teams })
-)(
-    class extends React.Component<TableViewProps, TableViewState> {
+export const TableView = class extends React.Component<{}, TableViewState> {
     state: TableViewState = {
         isModalOpen: false,
         gameName: '',
@@ -34,7 +26,6 @@ export const TableView = connect(
     };
 
     render() {
-        const { teams } = this.props;
         const { isModalOpen, calculationSettings } = this.state;
         return (
             <div>
@@ -47,46 +38,11 @@ export const TableView = connect(
                 <IconButton onClick={this.handleModalOpen}>
                     <SettingsIcon/>
                 </IconButton>
-                <Paper style={{ overflowX: 'auto' }}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Team Name</TableCell>
-                                <TableCell>Team Number</TableCell>
-                                {map(calculationSettings, setting => (
-                                    <TableCell key={`${setting.metricName}-${setting.calculationName}`}>
-                                        {`${setting.metricName} (${setting.calculationName})`}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {map(teams, (team, teamNumber) => (
-                                <TableRow key={team.name}>
-                                    <TableCell>{team.name}</TableCell>
-                                    <TableCell>{teamNumber}</TableCell>
-                                    {map(calculationSettings, setting => (
-                                        <TableCell key={`${setting.metricName}-${setting.calculationName}`}>
-                                            {`${calculations[setting.calculationName].invoke(
-                                                ...map(team.scouts, scout => (
-                                                    scout.metrics[setting.metricName]
-                                                ))
-                                            ).value}`}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </Paper>
+                <TableViewTable settings={calculationSettings}/>
             </div>
         );
     }
-});
-
-interface TableViewProps {
-    teams: Teams
-}
+};
 
 interface TableViewState {
     isModalOpen: boolean
