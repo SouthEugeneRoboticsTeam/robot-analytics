@@ -28,7 +28,7 @@ export const calculations: Calculations = {
         }),
     },
     'Average': {
-        types: [ScoutMetricType.NUMBER],
+        types: [ScoutMetricType.NUMBER, ScoutMetricType.BOOLEAN],
         invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(mean(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
