@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "if-env NODE_ENV=production && npm run -s serve || npm run -s dev",
-    "build": "webpack",
+    "build": "if-env NODE_ENV=production && webpack --config webpack.prod.js || webpack",
     "serve": "",
     "dev": "webpack-dev-server"
   },

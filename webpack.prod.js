@@ -8,13 +8,7 @@ module.exports = {
         filename: 'bundle.js',
         path: path.join(__dirname, 'dist')
     },
-    mode: 'development',
-    devtool: 'source-map',
-    devServer: {
-        contentBase: path.join(__dirname, 'public'),
-        port: 8080,
-        watchContentBase: true
-    },
+    mode: 'production',
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.json'],
         plugins: [
