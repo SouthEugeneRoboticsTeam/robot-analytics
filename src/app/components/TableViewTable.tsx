@@ -28,9 +28,38 @@ export const TableViewTable = compose(
     ),
     withStyles(styles)
 )(
-    class extends React.Component<TableViewTableProps> {
+    class extends React.Component<TableViewTableProps, TableViewTableState> {
+        getColumns = (settings: Array<CalculationSetting>) => [
+            'Team Number',
+            ...map(settings, setting => `${setting.metricName} (${setting.calculationName})`)
+        ];
+
+        getData = (settings: Array<CalculationSetting>, teams: Teams) => map(teams, (team, teamNumber) => [
+            teamNumber,
+            ...map(settings, setting => (
+                calculations[setting.calculationName].invoke(
+                    ...map(team.scouts, scout => (
+                        scout.metrics[setting.metricName]
+                    ))
+                ).value
+            ))
+        ]);
+
+        state = {
+            columns: this.getColumns(this.props.settings),
+            data: this.getData(this.props.settings, this.props.teams)
+        };
+
+        componentWillReceiveProps(nextProps: Readonly<TableViewTableProps>) {
+            this.setState({
+                columns: this.getColumns(nextProps.settings),
+                data: this.getData(nextProps.settings, nextProps.teams)
+            })
+        }
+
         render() {
-            const { settings, teams, classes } = this.props;
+            const { classes } = this.props;
+            const { columns, data } = this.state;
             return (
                 <Paper style={{ overflowX: 'auto' }}>
                     <Toolbar>
@@ -44,29 +73,13 @@ export const TableViewTable = compose(
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell>{'Team Name'}</TableCell>
-                                <TableCell>{'Team Number'}</TableCell>
-                                {map(settings, setting => (
-                                    <TableCell key={`${setting.metricName}-${setting.calculationName}`}>
-                                        {`${setting.metricName} (${setting.calculationName})`}
-                                    </TableCell>
-                                ))}
+                                {map(columns, (column, index) => <TableCell key={index}>{column}</TableCell>)}
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {map(teams, (team, teamNumber) => (
-                                <TableRow key={team.name}>
-                                    <TableCell>{team.name}</TableCell>
-                                    <TableCell>{teamNumber}</TableCell>
-                                    {map(settings, setting => (
-                                        <TableCell key={`${setting.metricName}-${setting.calculationName}`}>
-                                            {calculations[setting.calculationName].invoke(
-                                                ...map(team.scouts, scout => (
-                                                    scout.metrics[setting.metricName]
-                                                ))
-                                            ).value}
-                                        </TableCell>
-                                    ))}
+                            {map(data, (row, index) => (
+                                <TableRow key={index}>
+                                    {map(row, (cell, index) => <TableCell key={index}>{cell}</TableCell>)}
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -83,4 +96,9 @@ interface TableConnectProps {
 
 interface TableViewTableProps extends TableConnectProps, WithStyles<typeof styles> {
     teams: Teams
+}
+
+interface TableViewTableState {
+    columns: Array<string>,
+    data: Array<Array<any>>
 }
