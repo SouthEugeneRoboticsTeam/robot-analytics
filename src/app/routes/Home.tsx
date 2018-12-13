@@ -8,11 +8,9 @@ import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import SettingsIcon from '@material-ui/icons/Settings';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import TableChartIcon from '@material-ui/icons/TableChart';
-import CloudUpload from '@material-ui/icons/CloudUpload'
+import CloudUpload from '@material-ui/icons/CloudUpload';
 import { TableView } from './TableView';
 import { Switch, Route } from 'react-router-dom'
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -164,12 +162,6 @@ export const Home = withStyles(styles)(
                             >
                                 Robot Analytics
                             </Typography>
-                            <IconButton color="inherit">
-                                <SettingsIcon />
-                            </IconButton>
-                            <IconButton color="inherit">
-                                <AccountCircleIcon />
-                            </IconButton>
                             <input id="dataImport" type="file" accept='.json' ref={(ref) => this.fileUploader = ref} style={{display: 'none' }} onChange={this.handleFileUpload}/>
                             <IconButton
                             color="inherit"
