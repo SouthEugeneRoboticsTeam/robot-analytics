@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 export const NavigationItem = (props: NavigationItemProps) => {
     const { icon, text, linkTo } = props;
     return (
-        <Link to={linkTo} style={{ textDecoration: 'none' }}>
+        <Link to={linkTo} style={{ textDecoration: 'none', color: 'inherit' }}>
             <ListItem button>
                     <ListItemIcon>
                         {React.createElement(icon)}
