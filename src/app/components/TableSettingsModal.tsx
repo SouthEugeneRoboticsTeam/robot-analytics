@@ -24,7 +24,7 @@ const styles = (theme: Theme) => createStyles({
         padding: (p => `0 ${p}px ${p}px ${p}px`)(theme.spacing.unit * 3)
     },
     checkboxContainer: {
-        height: theme.spacing.unit * 24,
+        minHeight: theme.spacing.unit * 24,
         border: '1px solid grey',
         margin: (m => `0 ${m}px ${m}px ${m}px`)(theme.spacing.unit * 3)
     },
