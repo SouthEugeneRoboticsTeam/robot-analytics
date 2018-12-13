@@ -12,7 +12,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import TableChartIcon from '@material-ui/icons/TableChart';
-import ImportExport from '@material-ui/icons/ImportExport'
+import CloudUpload from '@material-ui/icons/CloudUpload'
 import { TableView } from './TableView';
 import { Switch, Route } from 'react-router-dom'
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -118,7 +118,7 @@ export const Home = withStyles(styles)(
                 store.dispatch(addData(processRsData(JSON.parse(event.target.result))));
             }
         };
-        
+
         render() {
             const { classes } = this.props;
             const { drawerOpened } = this.state;
@@ -174,7 +174,7 @@ export const Home = withStyles(styles)(
                             <IconButton
                             color="inherit"
                             onClick={() => this.fileUploader.click()}>
-                                <ImportExport />
+                                <CloudUpload />
                             </IconButton>
                         </Toolbar>
                     </AppBar>
