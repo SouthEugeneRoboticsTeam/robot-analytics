@@ -1,6 +1,5 @@
 import { Metric, ScoutMetricType } from '@robot-analytics/data/metric';
-import { reduce } from 'lodash';
-import { std, round, median, mean, mode, max, min } from 'mathjs';
+import { std, median, mean, mode, max, min } from 'mathjs';
 
 export type Calculations = {
     [name: string]: Calculation

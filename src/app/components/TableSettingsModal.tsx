@@ -10,9 +10,10 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogHeader from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
-import { Button, withMobileDialog } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { reduce, forEach, map, mapKeys, mapValues, isEmpty, keys } from 'lodash';
+import { reduce, forEach, map } from 'lodash';
 import { Teams } from '@robot-analytics/data/team';
 import { calculations } from '@robot-analytics/data/calculations';
 import { CalculationSetting } from '@robot-analytics/routes/TableView';
