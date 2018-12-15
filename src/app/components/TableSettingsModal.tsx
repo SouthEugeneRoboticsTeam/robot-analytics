@@ -93,7 +93,7 @@ export const TableSettingsModal = compose(
                     result[metricName] = {
                         checked: false,
                         calculationCheckboxes: reduce(calculations, (result: CalculationCheckboxes, calculation, calculationName) => {
-                            if (calculation.types.indexOf(metric.type) !== -1) {
+                            if (calculation.inputTypes.indexOf(metric.type) !== -1) {
                                 result[calculationName] = false;
                             }
                             return result;
@@ -137,7 +137,7 @@ export const TableSettingsModal = compose(
                                 <FormGroup className={classes.nestedCheckboxes}
                                            style={{ display: metricCheckboxes[metricName].checked ? null : 'none' }}>
                                     {reduce(calculations, (relativeCalculations, calculation, calculationName) => {
-                                        if (calculation.types.indexOf(metric.type) !== -1) {
+                                        if (calculation.inputTypes.indexOf(metric.type) !== -1) {
                                             relativeCalculations.push(<FormControlLabel
                                                 control={<Checkbox
                                                     checked={metricCheckboxes[metricName].calculationCheckboxes[calculationName]}

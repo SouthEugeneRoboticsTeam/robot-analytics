@@ -1,89 +1,216 @@
 import * as React from 'react';
 import { Teams } from '@robot-analytics/datateam';
 import { CalculationSetting } from '@robot-analytics/routesTableView';
-import { map } from 'lodash';
+import { forEach, keys, map, reduce, slice, orderBy } from 'lodash';
 import { calculations } from '@robot-analytics/datacalculations';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, withStyles, Theme, createStyles, WithStyles, Toolbar,
-    IconButton } from '@material-ui/core';
-import SettingsIcon from '@material-ui/icons/Settings';
+import { createStyles, Table, Theme, withStyles, WithStyles, Paper, TableBody, TableRow, TableCell, Checkbox,
+    TablePagination } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { AppState } from '@robot-analytics/statestate';
 import { compose } from 'redux';
+import { Column, TableViewTableHead } from '@robot-analytics/componentsTableViewTableHead';
+import { Metrics, ScoutMetricType } from '@robot-analytics/datametric';
+import { min } from 'mathjs';
 
 const styles = (theme: Theme) => createStyles({
-    toolbarSpacer: {
-        flex: '1 1 100%',
+    root: {
+        width: '100%',
+        marginTop: theme.spacing.unit * 3,
     },
-    toolbarActions: {
-        color: theme.palette.text.secondary,
+    table: {
+        minWidth: 1020,
     },
+    tableWrapper: {
+        overflowX: 'auto'
+    }
 });
 
 export const TableViewTable = compose(
     connect(
         (state: AppState, ownProps: TableConnectProps) => ({
             teams: state.teams,
+            metrics: state.metrics,
             ...ownProps
         })
     ),
     withStyles(styles)
 )(
     class extends React.Component<TableViewTableProps, TableViewTableState> {
-        getColumns = (settings: Array<CalculationSetting>) => [
-            'Team Number',
-            ...map(settings, setting => `${setting.metricName} (${setting.calculationName})`)
-        ];
+        state: TableViewTableState = {
+            columns: [
+                { name: 'Team Number', numeric: true, disablePadding: false }
+            ],
+            data: [],
+            order: 'asc',
+            orderProperty: 'Team Number',
+            selected: [],
+            page: 0,
+            rowsPerPage: 5
+        };
 
-        getData = (settings: Array<CalculationSetting>, teams: Teams) => map(teams, (team, teamNumber) => [
-            teamNumber,
-            ...map(settings, setting => (
-                calculations[setting.calculationName].invoke(
-                    ...map(team.scouts, scout => (
-                        scout.metrics[setting.metricName]
-                    ))
-                ).value
-            ))
-        ]);
+        handleRequestSort = (event: React.MouseEvent<HTMLElement>, property: string) => {
+            this.setState({
+                order: this.state.orderProperty === property && this.state.order === 'asc' ? 'desc' : 'asc',
+                orderProperty: property
+            });
+        };
 
-        state = {
-            columns: this.getColumns(this.props.settings),
-            data: this.getData(this.props.settings, this.props.teams)
+        handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+            if (event.target.checked) {
+                this.setState(state => ({ selected: state.data.map(n => n['']) }));
+                return;
+            }
+            this.setState({ selected: [] });
+        };
+
+        handleChangePage = (event: React.MouseEvent<HTMLButtonElement>, page: number) => {
+            this.setState({ page });
+        };
+
+        handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+            if (typeof event.target.value === 'number') {
+                this.setState({ rowsPerPage: event.target.value });
+            }
+        };
+
+        componentWillMount() {
+            this.setState({
+                columns: [
+                    ...this.state.columns,
+                    ...reduce(this.props.metrics, (acc: Array<Column>, metric, metricName) => {
+                        forEach(calculations, (calculation, calculationName) => {
+                            if (calculation.inputTypes.indexOf(metric.type) !== -1) {
+                                acc.push({
+                                    name: `${metricName} (${calculationName})`,
+                                    numeric: calculation.outputType === ScoutMetricType.NUMBER,
+                                    disablePadding: false
+                                })
+                            }
+                        });
+                        return acc;
+                    }, [])
+                ],
+                data: map(this.props.teams, (team, teamNumber) => (
+                    {
+                        ['Team Number']: parseInt(teamNumber),
+                        ...reduce(this.props.metrics, (row: Row, metric, metricName) => {
+                            forEach(calculations, (calculation, calculationName) => {
+                                if (calculation.inputTypes.indexOf(metric.type) !== -1) {
+                                    row[`${metricName} (${calculationName})`] = calculation.invoke(
+                                        ...map(team.scouts, scout => (
+                                            scout.metrics[metricName]
+                                        ))
+                                    ).value
+                                }
+                            });
+                            return row;
+                        }, {})
+                    }
+                )),
+            })
         };
 
         componentWillReceiveProps(nextProps: Readonly<TableViewTableProps>) {
             this.setState({
-                columns: this.getColumns(nextProps.settings),
-                data: this.getData(nextProps.settings, nextProps.teams)
+                columns: [
+                    ...this.state.columns,
+                    ...reduce(nextProps.metrics, (acc: Array<Column>, metric, metricName) => {
+                        forEach(calculations, (calculation, calculationName) => {
+                            if (calculation.inputTypes.indexOf(metric.type) !== -1) {
+                                acc.push({
+                                    name: `${metricName} (${calculationName})`,
+                                    numeric: calculation.outputType === ScoutMetricType.NUMBER,
+                                    disablePadding: false
+                                })
+                            }
+                        });
+                        return acc;
+                    }, [])
+                ],
+                data: map(nextProps.teams, (team, teamNumber) => (
+                    {
+                        ['Team Number']: parseInt(teamNumber),
+                        ...reduce(nextProps.metrics, (row: Row, metric, metricName) => {
+                            forEach(calculations, (calculation, calculationName) => {
+                                if (calculation.inputTypes.indexOf(metric.type) !== -1) {
+                                    row[`${metricName} (${calculationName})`] = calculation.invoke(
+                                        ...map(team.scouts, scout => (
+                                            scout.metrics[metricName]
+                                        ))
+                                    ).value
+                                }
+                            });
+                            return row;
+                        }, {})
+                    }
+                )),
             })
         }
 
         render() {
             const { classes } = this.props;
-            const { columns, data } = this.state;
+            const { data, columns, selected, order, orderProperty, page, rowsPerPage } = this.state;
+            const emptyRows = rowsPerPage - min(rowsPerPage, data.length - page * rowsPerPage);
             return (
-                <Paper style={{ overflowX: 'auto' }}>
-                    <Toolbar>
-                        <div className={classes.toolbarSpacer} />
-                        <div className={classes.toolbarActions}>
-                            <IconButton>
-                                <SettingsIcon/>
-                            </IconButton>
-                        </div>
-                    </Toolbar>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                {map(columns, (column, index) => <TableCell key={index}>{column}</TableCell>)}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {map(data, (row, index) => (
-                                <TableRow key={index}>
-                                    {map(row, (cell, index) => <TableCell key={index}>{cell}</TableCell>)}
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                <Paper className={classes.root}>
+                    <div className={classes.tableWrapper}>
+                        <Table>
+                            <TableViewTableHead
+                                columns={columns}
+                                numSelected={selected.length}
+                                onRequestSort={this.handleRequestSort}
+                                onSelectAllClick={this.handleSelectAllClick}
+                                order={order}
+                                orderBy={orderProperty}
+                                rowCount={data.length}
+                            />
+                            <TableBody>
+                                {map(slice(orderBy(data, [orderProperty], [order]), page * rowsPerPage, page * rowsPerPage + rowsPerPage), row => {
+                                    //const isSelected = this.isSelected(n.id);
+                                    return (
+                                        <TableRow
+                                            hover
+                                            //onClick={event => this.handleClick(event, n.id)}
+                                            role="checkbox"
+                                            //aria-checked={isSelected}
+                                            tabIndex={-1}
+                                            key={row.id}
+                                            //selected={isSelected}
+                                        >
+                                            <TableCell padding="checkbox">
+                                                <Checkbox /*checked={isSelected}*/ />
+                                            </TableCell>
+                                            {map(row, cell => (
+                                                <TableCell numeric={typeof cell === 'number'}>
+                                                    {cell}
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>
+                                    )
+                                })}
+                                {emptyRows > 0 && (
+                                    <TableRow style={{ height: 49 * emptyRows }}>
+                                        <TableCell colSpan={6} />
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
+                    <TablePagination
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={data.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        backIconButtonProps={{
+                            'aria-label': 'Previous Page',
+                        }}
+                        nextIconButtonProps={{
+                            'aria-label': 'Next Page',
+                        }}
+                        onChangePage={this.handleChangePage}
+                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                    />
                 </Paper>
             )
         }
@@ -95,10 +222,20 @@ interface TableConnectProps {
 }
 
 interface TableViewTableProps extends TableConnectProps, WithStyles<typeof styles> {
-    teams: Teams
+    teams: Teams,
+    metrics: Metrics
 }
 
 interface TableViewTableState {
-    columns: Array<string>,
-    data: Array<Array<any>>
+    columns: Array<Column>,
+    data: Array<Row>,
+    order: 'asc' | 'desc',
+    orderProperty: string,
+    selected: Array<string | number>
+    page: number,
+    rowsPerPage: number
+}
+
+interface Row {
+    [columnName: string]: string | number
 }
