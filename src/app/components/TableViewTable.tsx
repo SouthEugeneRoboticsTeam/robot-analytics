@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Teams } from '@robot-analytics/datateam';
 import { CalculationSetting } from '@robot-analytics/routesTableView';
-import { forEach, keys, map, reduce, slice, orderBy } from 'lodash';
+import { forEach, keys, map, reduce, slice, orderBy, filter } from 'lodash';
 import { calculations } from '@robot-analytics/datacalculations';
 import { createStyles, Table, Theme, withStyles, WithStyles, Paper, TableBody, TableRow, TableCell, Checkbox,
     TablePagination } from '@material-ui/core';
@@ -11,6 +11,7 @@ import { compose } from 'redux';
 import { Column, TableViewTableHead } from '@robot-analytics/componentsTableViewTableHead';
 import { Metrics, ScoutMetricType } from '@robot-analytics/datametric';
 import { min } from 'mathjs';
+import { TableViewTableToolbar } from '@robot-analytics/componentsTableViewTableToolbar';
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -45,7 +46,8 @@ export const TableViewTable = compose(
             orderProperty: 'Team Number',
             selected: [],
             page: 0,
-            rowsPerPage: 5
+            rowsPerPage: 5,
+            filterColumns: []
         };
 
         handleRequestSort = (event: React.MouseEvent<HTMLElement>, property: string) => {
@@ -53,6 +55,10 @@ export const TableViewTable = compose(
                 order: this.state.orderProperty === property && this.state.order === 'asc' ? 'desc' : 'asc',
                 orderProperty: property
             });
+        };
+
+        handleRequestFilter = (columnNames: Array<string>) => {
+            this.setState({ filterColumns: columnNames })
         };
 
         handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,14 +155,19 @@ export const TableViewTable = compose(
 
         render() {
             const { classes } = this.props;
-            const { data, columns, selected, order, orderProperty, page, rowsPerPage } = this.state;
+            const { data, columns, selected, order, orderProperty, page, rowsPerPage, filterColumns } = this.state;
             const emptyRows = rowsPerPage - min(rowsPerPage, data.length - page * rowsPerPage);
             return (
                 <Paper className={classes.root}>
+                    <TableViewTableToolbar
+                        numSelected={selected.length}
+                        onRequestFilter={this.handleRequestFilter}
+                        columnNames={map(columns, column => column.name)}
+                    />
                     <div className={classes.tableWrapper}>
                         <Table>
                             <TableViewTableHead
-                                columns={columns}
+                                columns={filter(columns, column => filterColumns.indexOf(column.name) === -1 || column.name === 'Team Number')}
                                 numSelected={selected.length}
                                 onRequestSort={this.handleRequestSort}
                                 onSelectAllClick={this.handleSelectAllClick}
@@ -180,7 +191,10 @@ export const TableViewTable = compose(
                                             <TableCell padding="checkbox">
                                                 <Checkbox /*checked={isSelected}*/ />
                                             </TableCell>
-                                            {map(row, cell => (
+                                            {map(
+                                                filter(row, (cell, cellName) => (
+                                                    filterColumns.indexOf(cellName) === -1 || cellName === 'Team Number'
+                                                )), cell => (
                                                 <TableCell numeric={typeof cell === 'number'}>
                                                     {cell}
                                                 </TableCell>
@@ -231,7 +245,8 @@ interface TableViewTableState {
     data: Array<Row>,
     order: 'asc' | 'desc',
     orderProperty: string,
-    selected: Array<string | number>
+    selected: Array<string | number>,
+    filterColumns: Array<string>
     page: number,
     rowsPerPage: number
 }
