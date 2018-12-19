@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { reduce, map, filter, keys } from 'lodash';
+import { reduce, map, filter, keys, forEach, includes } from 'lodash';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import {  Menu, MenuItem, Tooltip, IconButton, Checkbox, ListItemText } from '@material-ui/core';
 
 export class TableViewTableFilterButton extends React.Component<TableViewTableFilterButtonProps, TableViewTableFilterButtonState> {
     state: TableViewTableFilterButtonState = {
         modalOpen: false,
+        filter: [],
         checkboxes: reduce(this.props.columnNames, (checkboxes: Checkboxes, columnName) => {
             if (columnName !== 'Team Number') {
                 checkboxes[columnName] = true;
@@ -22,31 +23,32 @@ export class TableViewTableFilterButton extends React.Component<TableViewTableFi
     };
 
     handleClose = () => {
-        const { columnNames } = this.props;
         this.setState({ modalOpen: false, anchorEl: null });
-        this.props.onRequestFilter(filter(columnNames, columnName => !this.state.checkboxes[columnName]))
+        this.props.onRequestFilter(this.state.filter)
     };
 
     createCheckboxChangeHandler = (checkboxName: string) => () => {
         this.setState({
-            checkboxes: {
-                ...this.state.checkboxes,
-                [checkboxName]: !this.state.checkboxes[checkboxName]
-            }
-        })
+            filter: (included => {
+                switch (included.indexOf(checkboxName)) {
+                    case -1:
+                        return [...included, checkboxName];
+                    default:
+                        return filter(included, cn => cn !== checkboxName)
+                }
+            })(this.state.filter)
+        });
     };
 
     componentWillReceiveProps(nextProps: Readonly<TableViewTableFilterButtonProps>) {
-        this.setState({ checkboxes: reduce(nextProps.columnNames, (checkboxes: Checkboxes, columnName) => {
-            if (this.state.checkboxes[columnName] === undefined && columnName !== 'Team Number') {
-                checkboxes[columnName] = true;
-            }
-            return checkboxes;
-        }, this.state.checkboxes) })
+        this.setState({
+            filter: filter(nextProps.columnNames, columnName => includes(this.state.filter, columnName))
+        })
     }
 
     render() {
-        const { anchorEl, checkboxes } = this.state;
+        const { columnNames } = this.props;
+        const { anchorEl, filter } = this.state;
         return (
             <div>
                 <Tooltip title="Filter list">
@@ -65,21 +67,24 @@ export class TableViewTableFilterButton extends React.Component<TableViewTableFi
                     open={Boolean(anchorEl)}
                     onClose={this.handleClose}
                 >
-                    {map(checkboxes, (checkbox, checkboxName) => (
+                    {map(columnNames, columnName => (
                         <MenuItem
-                            key={checkboxName}
+                            key={columnName}
                             role="checkbox"
-                            aria-checked={checkbox}
-                            onClick={this.createCheckboxChangeHandler(checkboxName)}
+                            aria-checked={!includes(filter, columnName)}
+                            onClick={this.createCheckboxChangeHandler(columnName)}
                         >
-                            <Checkbox checked={checkbox} onChange={this.createCheckboxChangeHandler(checkboxName)}/>
-                            <ListItemText>{checkboxName}</ListItemText>
+                            <Checkbox
+                                checked={!includes(filter, columnName)}
+                                onChange={this.createCheckboxChangeHandler(columnName)}
+                            />
+                            <ListItemText>{columnName}</ListItemText>
                         </MenuItem>
                     ))}
                 </Menu>
             </div>
         );
-    }
+    };
 }
 
 interface TableViewTableFilterButtonProps {
@@ -89,6 +94,7 @@ interface TableViewTableFilterButtonProps {
 
 interface TableViewTableFilterButtonState {
     modalOpen: boolean
+    filter: Array<string>
     checkboxes: Checkboxes
     anchorEl: HTMLElement | null
 }
