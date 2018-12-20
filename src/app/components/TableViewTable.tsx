@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Teams } from '@robot-analytics/datateam';
 import { CalculationSetting } from '@robot-analytics/routesTableView';
-import { forEach, keys, map, reduce, slice, orderBy, filter } from 'lodash';
+import { forEach, keys, map, reduce, slice, orderBy, filter, includes } from 'lodash';
 import { calculations } from '@robot-analytics/datacalculations';
 import { createStyles, Table, Theme, withStyles, WithStyles, Paper, TableBody, TableRow, TableCell, Checkbox,
     TablePagination } from '@material-ui/core';
@@ -63,10 +63,22 @@ export const TableViewTable = compose(
 
         handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
             if (event.target.checked) {
-                this.setState(state => ({ selected: state.data.map(n => n['']) }));
+                this.setState(state => ({
+                    selected: this.state.selected.length !== state.data.length
+                        ? state.data.map(row => row['Team Number'])
+                        : []
+                }));
                 return;
             }
             this.setState({ selected: [] });
+        };
+
+        createCheckboxChangeHandler = (teamNumber: string | number) => () => {
+            this.setState({
+                selected: includes(this.state.selected, teamNumber)
+                    ? filter(this.state.selected, tn => tn !== teamNumber)
+                    : [...this.state.selected, teamNumber]
+            });
         };
 
         handleChangePage = (event: React.MouseEvent<HTMLButtonElement>, page: number) => {
@@ -177,19 +189,18 @@ export const TableViewTable = compose(
                             />
                             <TableBody>
                                 {map(slice(orderBy(data, [orderProperty], [order]), page * rowsPerPage, page * rowsPerPage + rowsPerPage), row => {
-                                    //const isSelected = this.isSelected(n.id);
                                     return (
                                         <TableRow
                                             hover
-                                            //onClick={event => this.handleClick(event, n.id)}
+                                            onClick={this.createCheckboxChangeHandler(row['Team Number'])}
                                             role="checkbox"
-                                            //aria-checked={isSelected}
+                                            aria-checked={includes(selected, row['Team Number'])}
                                             tabIndex={-1}
-                                            key={row.id}
-                                            //selected={isSelected}
+                                            key={row['Team Number']}
+                                            selected={includes(selected, row['Team Number'])}
                                         >
                                             <TableCell padding="checkbox">
-                                                <Checkbox /*checked={isSelected}*/ />
+                                                <Checkbox checked={includes(selected, row['Team Number'])} />
                                             </TableCell>
                                             {map(
                                                 filter(row, (cell, cellName) => (
