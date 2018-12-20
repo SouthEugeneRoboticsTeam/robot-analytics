@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { withStyles, Theme, Typography, WithStyles, Tooltip, IconButton, Toolbar } from '@material-ui/core';
+import { withStyles, Theme, Typography, WithStyles, Toolbar } from '@material-ui/core';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
-import DeleteIcon from '@material-ui/icons/Delete';
 import classNames = require('classnames');
 import { TableViewTableFilterButton } from '@robot-analytics/componentsTableViewTableFilterButton';
 
@@ -51,11 +50,7 @@ export const TableViewTableToolbar = withStyles(styles)(
             <div className={props.classes.spacer}/>
             <div className={props.classes.actions}>
                 {props.numSelected > 0 ? (
-                    <Tooltip title="Delete">
-                        <IconButton aria-label="Delete">
-                            <DeleteIcon/>
-                        </IconButton>
-                    </Tooltip>
+                    null
                 ) : (
                     <TableViewTableFilterButton columnNames={props.columnNames} onRequestFilter={props.onRequestFilter} />
                 )}
