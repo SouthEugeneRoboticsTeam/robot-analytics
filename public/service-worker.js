@@ -1,4 +1,4 @@
-const cacheName = 'robot-analytics-v1';
+const cacheName = 'robot-analytics-v1.1';
 const filesToCache = [
     '/',
     '/favicon.ico',
