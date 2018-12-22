@@ -3,7 +3,7 @@ import { Teams } from '@robot-analytics/datateam';
 import { CalculationSetting } from '@robot-analytics/routesTableView';
 import { forEach, keys, map, reduce, slice, orderBy, filter, includes } from 'lodash';
 import { calculations } from '@robot-analytics/datacalculations';
-import { createStyles, Table, Theme, withStyles, WithStyles, Paper, TableBody, TableRow, TableCell, Checkbox,
+import { createStyles, Table, Theme, withStyles, WithStyles, Paper, TableBody, TableRow, TableCell,
     TablePagination } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { AppState } from '@robot-analytics/statestate';
@@ -44,7 +44,6 @@ export const TableViewTable = compose(
             data: [],
             order: 'asc',
             orderProperty: 'Team Number',
-            selected: [],
             page: 0,
             rowsPerPage: 5,
             filterColumns: []
@@ -59,26 +58,6 @@ export const TableViewTable = compose(
 
         handleRequestFilter = (columnNames: Array<string>) => {
             this.setState({ filterColumns: columnNames })
-        };
-
-        handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-            if (event.target.checked) {
-                this.setState(state => ({
-                    selected: this.state.selected.length !== state.data.length
-                        ? state.data.map(row => row['Team Number'])
-                        : []
-                }));
-                return;
-            }
-            this.setState({ selected: [] });
-        };
-
-        createCheckboxChangeHandler = (teamNumber: string | number) => () => {
-            this.setState({
-                selected: includes(this.state.selected, teamNumber)
-                    ? filter(this.state.selected, tn => tn !== teamNumber)
-                    : [...this.state.selected, teamNumber]
-            });
         };
 
         handleChangePage = (event: React.MouseEvent<HTMLButtonElement>, page: number) => {
@@ -167,12 +146,11 @@ export const TableViewTable = compose(
 
         render() {
             const { classes } = this.props;
-            const { data, columns, selected, order, orderProperty, page, rowsPerPage, filterColumns } = this.state;
+            const { data, columns, order, orderProperty, page, rowsPerPage, filterColumns } = this.state;
             const emptyRows = rowsPerPage - min(rowsPerPage, data.length - page * rowsPerPage);
             return (
                 <Paper className={classes.root}>
                     <TableViewTableToolbar
-                        numSelected={selected.length}
                         onRequestFilter={this.handleRequestFilter}
                         columnNames={map(columns, column => column.name)}
                     />
@@ -180,9 +158,7 @@ export const TableViewTable = compose(
                         <Table>
                             <TableViewTableHead
                                 columns={filter(columns, column => filterColumns.indexOf(column.name) === -1 || column.name === 'Team Number')}
-                                numSelected={selected.length}
                                 onRequestSort={this.handleRequestSort}
-                                onSelectAllClick={this.handleSelectAllClick}
                                 order={order}
                                 orderBy={orderProperty}
                                 rowCount={data.length}
@@ -192,16 +168,9 @@ export const TableViewTable = compose(
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={this.createCheckboxChangeHandler(row['Team Number'])}
-                                            role="checkbox"
-                                            aria-checked={includes(selected, row['Team Number'])}
                                             tabIndex={-1}
                                             key={row['Team Number']}
-                                            selected={includes(selected, row['Team Number'])}
                                         >
-                                            <TableCell padding="checkbox">
-                                                <Checkbox checked={includes(selected, row['Team Number'])} />
-                                            </TableCell>
                                             {map(
                                                 filter(row, (cell, cellName) => (
                                                     filterColumns.indexOf(cellName) === -1 || cellName === 'Team Number'
@@ -256,7 +225,6 @@ interface TableViewTableState {
     data: Array<Row>,
     order: 'asc' | 'desc',
     orderProperty: string,
-    selected: Array<string | number>,
     filterColumns: Array<string>
     page: number,
     rowsPerPage: number

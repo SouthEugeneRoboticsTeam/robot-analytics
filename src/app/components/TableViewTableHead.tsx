@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TableHead, TableRow, TableCell, Checkbox, Tooltip, TableSortLabel } from '@material-ui/core';
+import { TableHead, TableRow, TableCell, Tooltip, TableSortLabel } from '@material-ui/core';
 import { map } from 'lodash';
 
 export class TableViewTableHead extends React.Component<TableViewTableHeadProps> {
@@ -8,17 +8,10 @@ export class TableViewTableHead extends React.Component<TableViewTableHeadProps>
     };
 
     render() {
-        const { columns, onSelectAllClick, order, orderBy, numSelected, rowCount } = this.props;
+        const { columns, order, orderBy } = this.props;
         return (
             <TableHead>
                 <TableRow>
-                    <TableCell padding="checkbox">
-                        <Checkbox
-                            indeterminate={numSelected > 0 && numSelected < rowCount}
-                            checked={numSelected === rowCount}
-                            onChange={onSelectAllClick}
-                        />
-                    </TableCell>
                     {map(columns, column => (
                         <TableCell
                             key={column.name}
@@ -49,9 +42,7 @@ export class TableViewTableHead extends React.Component<TableViewTableHeadProps>
 
 interface TableViewTableHeadProps {
     columns: Array<Column>
-    numSelected: number
     onRequestSort: (event: React.MouseEvent<HTMLElement>, property: string) => void,
-    onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void,
     order: 'asc' | 'desc'
     orderBy: string
     rowCount: number
