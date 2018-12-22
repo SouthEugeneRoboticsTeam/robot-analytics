@@ -1,26 +1,29 @@
 import { Metric, ScoutMetricType } from '@robot-analytics/data/metric';
-import { std, median, mean, mode, max, min, round } from 'mathjs';
+import { max, mean, median, min, mode, round, std } from 'mathjs';
 
 export type Calculations = {
     [name: string]: Calculation
 }
 
 export interface Calculation<T = any> {
-    types: Array<ScoutMetricType>,
+    inputTypes: Array<ScoutMetricType>,
+    outputType: ScoutMetricType,
     invoke: (...metrics: Array<Metric<T>>) => Metric
 }
 
 export const calculations: Calculations = {
     'Maximum': {
-        types: [ScoutMetricType.NUMBER],
+        inputTypes: [ScoutMetricType.NUMBER],
+        outputType: ScoutMetricType.NUMBER,
         invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(max(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
             category: metrics[0].category,
-        }),
+        })
     },
     'Minimum': {
-        types: [ScoutMetricType.NUMBER],
+        inputTypes: [ScoutMetricType.NUMBER],
+        outputType: ScoutMetricType.NUMBER,
         invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(min(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
@@ -28,7 +31,8 @@ export const calculations: Calculations = {
         }),
     },
     'Average': {
-        types: [ScoutMetricType.NUMBER, ScoutMetricType.BOOLEAN],
+        inputTypes: [ScoutMetricType.NUMBER, ScoutMetricType.BOOLEAN],
+        outputType: ScoutMetricType.NUMBER,
         invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(mean(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
@@ -36,7 +40,8 @@ export const calculations: Calculations = {
         }),
     },
     'Median': {
-        types: [ScoutMetricType.NUMBER],
+        inputTypes: [ScoutMetricType.NUMBER],
+        outputType: ScoutMetricType.NUMBER,
         invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(median(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
@@ -44,15 +49,23 @@ export const calculations: Calculations = {
         }),
     },
     'Mode': {
-        types: [ScoutMetricType.NUMBER],
-        invoke: (...metrics: Array<Metric>) => ({
-            type: ScoutMetricType.NUMBER,
-            value: round(mode(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
-            category: metrics[0].category,
-        }),
+        inputTypes: [ScoutMetricType.NUMBER, ScoutMetricType.TEXT],
+        outputType: ScoutMetricType.NUMBER,
+        invoke: (...metrics: Array<Metric>) => (
+            metrics[0].type === ScoutMetricType.NUMBER ? {
+                    type: ScoutMetricType.NUMBER,
+                    value: round(parseFloat(mode(metrics.filter((metric) => !!metric).map((metric) => metric.value))), 2),
+                    category: metrics[0].category,
+            } : metrics[0].type === ScoutMetricType.TEXT ? {
+                type: ScoutMetricType.TEXT,
+                value: mode(metrics.filter((metric) => !!metric).map((metric) => metric.value)),
+                category: metrics[0].category,
+            } : null
+        ),
     },
     'Standard Deviation': {
-        types: [ScoutMetricType.NUMBER],
+        inputTypes: [ScoutMetricType.NUMBER],
+        outputType: ScoutMetricType.NUMBER,
         invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(std(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),

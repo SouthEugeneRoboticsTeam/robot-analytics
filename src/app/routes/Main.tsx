@@ -117,7 +117,7 @@ export const Main = withStyles(styles)(
             reader.readAsText(event.target.files[0]);
             reader.onload = (event: any) => {
                 store.dispatch(addData(processRsData(JSON.parse(event.target.result))));
-                this.props.history.replace('/table-view')
+                this.props.history.replace('/table-view');
             }
         };
 
