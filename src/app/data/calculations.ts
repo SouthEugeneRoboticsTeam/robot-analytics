@@ -54,11 +54,11 @@ export const calculations: Calculations = {
         invoke: (...metrics: Array<Metric>) => (
             metrics[0].type === ScoutMetricType.NUMBER ? {
                     type: ScoutMetricType.NUMBER,
-                    value: round(parseFloat(mode(metrics.filter((metric) => !!metric).map((metric) => metric.value))), 2),
+                    value: mode(metrics.filter((metric) => !!metric).map((metric) => metric.value)).join(', '),
                     category: metrics[0].category,
             } : metrics[0].type === ScoutMetricType.TEXT ? {
                 type: ScoutMetricType.TEXT,
-                value: mode(metrics.filter((metric) => !!metric).map((metric) => metric.value)),
+                value: mode(metrics.filter((metric) => !!metric).map((metric) => metric.value)).join(', '),
                 category: metrics[0].category,
             } : null
         ),
