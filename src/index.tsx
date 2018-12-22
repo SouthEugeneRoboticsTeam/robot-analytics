@@ -7,6 +7,7 @@ import { App } from '@robot-analytics/components/App';
 import { store } from '@robot-analytics/state/store';
 import '@robot-analytics/firebase';
 import { theme } from '@robot-analytics/theme';
+import registerServiceWorker from './registerServiceWorker';
 
 const Root = () => (
     <BrowserRouter>
@@ -19,3 +20,5 @@ const Root = () => (
 );
 
 render(<Root />, document.getElementById('root'));
+
+registerServiceWorker();

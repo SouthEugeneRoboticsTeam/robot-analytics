@@ -3,7 +3,6 @@ import { ActionType } from 'typesafe-actions';
 import { Teams } from '../data/team';
 import { ActionTypes } from './actions';
 import * as actions from './actions';
-import { map, reduce } from 'lodash';
 import { Metrics } from '@robot-analytics/datametric';
 
 const teams = (state: Teams = {}, action: ActionType<typeof actions>) => {

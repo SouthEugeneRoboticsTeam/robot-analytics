@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
@@ -8,13 +9,7 @@ module.exports = {
         filename: 'bundle.js',
         path: path.join(__dirname, 'dist')
     },
-    mode: 'development',
-    devtool: 'source-map',
-    devServer: {
-        contentBase: path.join(__dirname, 'public'),
-        port: 8080,
-        watchContentBase: true
-    },
+    mode: 'production',
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.json'],
         plugins: [
@@ -29,9 +24,16 @@ module.exports = {
             { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
         ]
     },
+    optimization: {
+        minimize: true,
+    },
     plugins: [
-        new CopyWebpackPlugin([
-            { from: 'public', to: '.' }
-        ])
+        new webpack.DefinePlugin({
+            'process.env': {
+                'NODE_ENV': JSON.stringify('production')
+            }
+        }),
+        new webpack.optimize.AggressiveMergingPlugin(),
+        new CopyWebpackPlugin([{ from: 'public', to: '.' }])
     ]
 };

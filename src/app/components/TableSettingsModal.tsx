@@ -10,9 +10,10 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogHeader from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
-import { Button, withMobileDialog } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import withMobileDialog from '@material-ui/core/withMobileDialog';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import { reduce, forEach, map, mapKeys, mapValues, isEmpty, keys } from 'lodash';
+import { reduce, forEach, map } from 'lodash';
 import { Teams } from '@robot-analytics/data/team';
 import { calculations } from '@robot-analytics/data/calculations';
 import { CalculationSetting } from '@robot-analytics/routes/TableView';
@@ -23,7 +24,7 @@ const styles = (theme: Theme) => createStyles({
         padding: (p => `0 ${p}px ${p}px ${p}px`)(theme.spacing.unit * 3)
     },
     checkboxContainer: {
-        height: theme.spacing.unit * 24,
+        minHeight: theme.spacing.unit * 24,
         border: '1px solid grey',
         margin: (m => `0 ${m}px ${m}px ${m}px`)(theme.spacing.unit * 3)
     },
