@@ -80,8 +80,7 @@ export class TableViewTableFilterButton extends React.Component<TableViewTableFi
                         />
                         <ListItemText>Select all</ListItemText>
                     </MenuItem>
-                    {/*<Divider>*/}
-                    {map(filter(columnNames, columnName => columnName !== 'Team Number'), columnName => (
+                    {map(filter(columnNames, columnName => columnName !== 'Team number'), columnName => (
                         <MenuItem
                             key={columnName}
                             role="checkbox"
@@ -95,7 +94,6 @@ export class TableViewTableFilterButton extends React.Component<TableViewTableFi
                             <ListItemText>{columnName}</ListItemText>
                         </MenuItem>
                     ))}
-                    {/*</Divider>*/}
                 </Menu>
             </div>
         );

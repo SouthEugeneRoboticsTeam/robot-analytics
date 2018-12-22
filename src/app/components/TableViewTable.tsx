@@ -39,12 +39,12 @@ export const TableViewTable = compose(
     class extends React.Component<TableViewTableProps, TableViewTableState> {
         state: TableViewTableState = {
             columns: [
-                { name: 'Team Number', numeric: true, disablePadding: false },
-                { name: 'Scout Count', numeric: true, disablePadding: false }
+                { name: 'Team number', numeric: true, disablePadding: false },
+                { name: 'Scout count', numeric: true, disablePadding: false }
             ],
             data: [],
             order: 'asc',
-            orderProperty: 'Team Number',
+            orderProperty: 'Team number',
             page: 0,
             rowsPerPage: 5,
             filterColumns: []
@@ -90,8 +90,8 @@ export const TableViewTable = compose(
                 ],
                 data: map(this.props.teams, (team, teamNumber) => (
                     {
-                        ['Team Number']: parseInt(teamNumber),
-                        ['Scout Count']: keys(team.scouts).length,
+                        ['Team number']: parseInt(teamNumber),
+                        ['Scout count']: keys(team.scouts).length,
                         ...reduce(this.props.metrics, (row: Row, metric, metricName) => {
                             forEach(calculations, (calculation, calculationName) => {
                                 if (calculation.inputTypes.indexOf(metric.type) !== -1) {
@@ -128,7 +128,8 @@ export const TableViewTable = compose(
                 ],
                 data: map(nextProps.teams, (team, teamNumber) => (
                     {
-                        ['Team Number']: parseInt(teamNumber),
+                        ['Team number']: parseInt(teamNumber),
+                        ['Scout count']: keys(team.scouts).length,
                         ...reduce(nextProps.metrics, (row: Row, metric, metricName) => {
                             forEach(calculations, (calculation, calculationName) => {
                                 if (calculation.inputTypes.indexOf(metric.type) !== -1) {
@@ -171,13 +172,13 @@ export const TableViewTable = compose(
                                         <TableRow
                                             hover
                                             tabIndex={-1}
-                                            key={row['Team Number']}
+                                            key={row['Team number']}
                                         >
                                             {map(
                                                 filter(row, (cell, cellName) => (
-                                                    filterColumns.indexOf(cellName) === -1 || cellName === 'Team Number'
+                                                    filterColumns.indexOf(cellName) === -1 || cellName === 'Team number'
                                                 )), (cell, cellName) => (
-                                                <TableCell numeric={typeof cell === 'number'} key={`${row['Team Number']}-${cellName}`}>
+                                                <TableCell numeric={typeof cell === 'number'} key={`${row['Team number']}-${cellName}`}>
                                                     {cell}
                                                 </TableCell>
                                             ))}
