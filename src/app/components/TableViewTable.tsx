@@ -39,7 +39,8 @@ export const TableViewTable = compose(
     class extends React.Component<TableViewTableProps, TableViewTableState> {
         state: TableViewTableState = {
             columns: [
-                { name: 'Team Number', numeric: true, disablePadding: false }
+                { name: 'Team Number', numeric: true, disablePadding: false },
+                { name: 'Scout Count', numeric: true, disablePadding: false }
             ],
             data: [],
             order: 'asc',
@@ -90,6 +91,7 @@ export const TableViewTable = compose(
                 data: map(this.props.teams, (team, teamNumber) => (
                     {
                         ['Team Number']: parseInt(teamNumber),
+                        ['Scout Count']: keys(team.scouts).length,
                         ...reduce(this.props.metrics, (row: Row, metric, metricName) => {
                             forEach(calculations, (calculation, calculationName) => {
                                 if (calculation.inputTypes.indexOf(metric.type) !== -1) {
@@ -174,8 +176,8 @@ export const TableViewTable = compose(
                                             {map(
                                                 filter(row, (cell, cellName) => (
                                                     filterColumns.indexOf(cellName) === -1 || cellName === 'Team Number'
-                                                )), cell => (
-                                                <TableCell numeric={typeof cell === 'number'}>
+                                                )), (cell, cellName) => (
+                                                <TableCell numeric={typeof cell === 'number'} key={`${row['Team Number']}-${cellName}`}>
                                                     {cell}
                                                 </TableCell>
                                             ))}

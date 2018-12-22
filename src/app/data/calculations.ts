@@ -1,5 +1,5 @@
 import { Metric, ScoutMetricType } from '@robot-analytics/data/metric';
-import { std, median, mean, mode, max, min, round } from 'mathjs';
+import { max, mean, median, min, mode, round, std } from 'mathjs';
 
 export type Calculations = {
     [name: string]: Calculation
@@ -31,7 +31,7 @@ export const calculations: Calculations = {
         }),
     },
     'Average': {
-        inputTypes: [ScoutMetricType.NUMBER],
+        inputTypes: [ScoutMetricType.NUMBER, ScoutMetricType.BOOLEAN],
         outputType: ScoutMetricType.NUMBER,
         invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
@@ -49,13 +49,19 @@ export const calculations: Calculations = {
         }),
     },
     'Mode': {
-        inputTypes: [ScoutMetricType.NUMBER],
+        inputTypes: [ScoutMetricType.NUMBER, ScoutMetricType.TEXT],
         outputType: ScoutMetricType.NUMBER,
-        invoke: (...metrics: Array<Metric>) => ({
-            type: ScoutMetricType.NUMBER,
-            value: round(parseFloat(mode(metrics.filter((metric) => !!metric).map((metric) => metric.value))), 2),
-            category: metrics[0].category,
-        }),
+        invoke: (...metrics: Array<Metric>) => (
+            metrics[0].type === ScoutMetricType.NUMBER ? {
+                    type: ScoutMetricType.NUMBER,
+                    value: round(parseFloat(mode(metrics.filter((metric) => !!metric).map((metric) => metric.value))), 2),
+                    category: metrics[0].category,
+            } : metrics[0].type === ScoutMetricType.TEXT ? {
+                type: ScoutMetricType.TEXT,
+                value: mode(metrics.filter((metric) => !!metric).map((metric) => metric.value)),
+                category: metrics[0].category,
+            } : null
+        ),
     },
     'Standard Deviation': {
         inputTypes: [ScoutMetricType.NUMBER],

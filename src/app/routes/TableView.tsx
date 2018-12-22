@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
-import { TableSettingsModal } from '../components/TableSettingsModal';
 import { TableViewTable } from '@robot-analytics/componentsTableViewTable';
 
 export const TableView = class extends React.Component<{}, TableViewState> {
@@ -10,7 +9,7 @@ export const TableView = class extends React.Component<{}, TableViewState> {
     };
 
     render() {
-        const { isModalOpen, calculationSettings } = this.state;
+        const { calculationSettings } = this.state;
         return (
             <div>
                 <Typography variant="display2">Table View</Typography>
