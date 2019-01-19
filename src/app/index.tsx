@@ -3,7 +3,7 @@ import { Switch, Route } from 'react-router';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { Main } from '@robot-analytics/routes/Main';
 
-export const App = () => (
+const App = () => (
     <>
         <CssBaseline />
         <Switch>
@@ -11,3 +11,5 @@ export const App = () => (
         </Switch>
     </>
 );
+
+export default App;

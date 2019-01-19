@@ -18,7 +18,7 @@ import { Switch, Route } from 'react-router-dom';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
-import { NavigationItem } from '@robot-analytics/components/NavigationItem';
+import { NavigationItem } from '@robot-analytics/routes/Main/NavigationItem';
 import { store } from '@robot-analytics/state/store'
 import { addData } from '@robot-analytics/state/actions';
 import { processRsData } from '@robot-analytics/processing/scoutFormatter';
