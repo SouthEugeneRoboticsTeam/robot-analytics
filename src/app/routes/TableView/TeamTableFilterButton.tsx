@@ -3,8 +3,8 @@ import { reduce, map, filter, keys, forEach, includes } from 'lodash';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import {  Menu, MenuItem, Tooltip, IconButton, Checkbox, ListItemText } from '@material-ui/core';
 
-export class TableViewTableFilterButton extends React.Component<TableViewTableFilterButtonProps, TableViewTableFilterButtonState> {
-    state: TableViewTableFilterButtonState = {
+class TeamTableFilterButton extends React.Component<TableFilterButtonProps, TableFilterButtonState> {
+    state: TableFilterButtonState = {
         modalOpen: false,
         filterColumns: [],
         anchorEl: null
@@ -34,7 +34,7 @@ export class TableViewTableFilterButton extends React.Component<TableViewTableFi
         });
     };
 
-    componentWillReceiveProps(nextProps: Readonly<TableViewTableFilterButtonProps>) {
+    componentWillReceiveProps(nextProps: Readonly<TableFilterButtonProps>) {
         this.setState({
             filterColumns: filter(nextProps.columnNames, columnName => includes(this.state.filterColumns, columnName))
         })
@@ -100,14 +100,16 @@ export class TableViewTableFilterButton extends React.Component<TableViewTableFi
     };
 }
 
-interface TableViewTableFilterButtonProps {
+interface TableFilterButtonProps {
     columnNames: Array<string>
     onRequestFilter: (columnNames: Array<string>) => void
 }
 
-interface TableViewTableFilterButtonState {
+interface TableFilterButtonState {
     modalOpen: boolean
     filterColumns: Array<string>
     anchorEl: HTMLElement | null
 }
+
+export default TeamTableFilterButton;
 

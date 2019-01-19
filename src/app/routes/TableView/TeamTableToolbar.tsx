@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { withStyles, Theme, Typography, WithStyles, Toolbar } from '@material-ui/core';
-import { TableViewTableFilterButton } from '@robot-analytics/components/TableViewTableFilterButton';
+import TeamTableFilterButton from '@robot-analytics/routes/TableView/TeamTableFilterButton';
 
 const styles = (theme: Theme) => ({
     root: {
@@ -17,8 +17,8 @@ const styles = (theme: Theme) => ({
     },
 });
 
-export const TableViewTableToolbar = withStyles(styles)(
-    (props: TableViewTableToolbarProps) => (
+const TeamTableToolbar = withStyles(styles)(
+    (props: TableToolbarProps) => (
         <Toolbar
             className={props.classes.root}
         >
@@ -29,13 +29,15 @@ export const TableViewTableToolbar = withStyles(styles)(
             </div>
             <div className={props.classes.spacer}/>
             <div className={props.classes.actions}>
-                <TableViewTableFilterButton columnNames={props.columnNames} onRequestFilter={props.onRequestFilter} />
+                <TeamTableFilterButton columnNames={props.columnNames} onRequestFilter={props.onRequestFilter} />
             </div>
         </Toolbar>
     )
 );
 
-interface TableViewTableToolbarProps extends WithStyles<typeof styles>{
+interface TableToolbarProps extends WithStyles<typeof styles>{
     onRequestFilter: (columnNames: Array<string>) => void
     columnNames: Array<string>
 }
+
+export default TeamTableToolbar;
