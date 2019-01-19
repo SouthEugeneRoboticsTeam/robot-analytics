@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { TableHead, TableRow, TableCell, Tooltip, TableSortLabel } from '@material-ui/core';
 import { map } from 'lodash';
+import { Column } from '@robot-analytics/routes/TableView/data';
 
-export class TableViewTableHead extends React.Component<TableViewTableHeadProps> {
+class TeamTableHead extends React.Component<TeamTableHeadProps> {
     createSortHandler = (property: string) => (event: React.MouseEvent<HTMLElement>) => {
         this.props.onRequestSort(event, property);
     };
@@ -40,7 +41,7 @@ export class TableViewTableHead extends React.Component<TableViewTableHeadProps>
     }
 }
 
-interface TableViewTableHeadProps {
+interface TeamTableHeadProps {
     columns: Array<Column>
     onRequestSort: (event: React.MouseEvent<HTMLElement>, property: string) => void,
     order: 'asc' | 'desc'
@@ -48,8 +49,6 @@ interface TableViewTableHeadProps {
     rowCount: number
 }
 
-export interface Column {
-    name: string,
-    numeric: boolean,
-    disablePadding: boolean
-}
+
+
+export default TeamTableHead;

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Teams } from '@robot-analytics/data/team';
-import { CalculationSetting } from '@robot-analytics/routes/TableView';
 import { forEach, keys, map, reduce, slice, orderBy, filter, includes } from 'lodash';
 import { calculations } from '@robot-analytics/data/calculations';
 import { createStyles, Table, Theme, withStyles, WithStyles, Paper, TableBody, TableRow, TableCell,
@@ -8,10 +7,12 @@ import { createStyles, Table, Theme, withStyles, WithStyles, Paper, TableBody, T
 import { connect } from 'react-redux';
 import { AppState } from '@robot-analytics/state/state';
 import { compose } from 'redux';
-import { Column, TableViewTableHead } from '@robot-analytics/components/TableViewTableHead';
+import TeamTableHead from '@robot-analytics/routes/TableView/TeamTableHead';
+import { Column } from '@robot-analytics/routes/TableView/data';
 import { Metrics, ScoutMetricType } from '@robot-analytics/data/metric';
 import { min } from 'mathjs';
-import { TableViewTableToolbar } from '@robot-analytics/components/TableViewTableToolbar';
+import TeamTableToolbar from '@robot-analytics/routes/TableView/TeamTableToolbar';
+import { Row } from '@robot-analytics/routes/TableView/data';
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -26,18 +27,17 @@ const styles = (theme: Theme) => createStyles({
     }
 });
 
-export const TableViewTable = compose(
+const TeamTable = compose(
     connect(
-        (state: AppState, ownProps: TableConnectProps) => ({
+        (state: AppState) => ({
             teams: state.teams,
-            metrics: state.metrics,
-            ...ownProps
+            metrics: state.metrics
         })
     ),
     withStyles(styles)
 )(
-    class extends React.Component<TableViewTableProps, TableViewTableState> {
-        state: TableViewTableState = {
+    class extends React.Component<TeamTableProps, TeamTableState> {
+        state: TeamTableState = {
             columns: [
                 { name: 'Team number', numeric: true, disablePadding: false },
                 { name: 'Scout count', numeric: true, disablePadding: false }
@@ -109,7 +109,7 @@ export const TableViewTable = compose(
             })
         };
 
-        componentWillReceiveProps(nextProps: Readonly<TableViewTableProps>) {
+        componentWillReceiveProps(nextProps: Readonly<TeamTableProps>) {
             this.setState({
                 columns: [
                     ...this.state.columns,
@@ -153,13 +153,13 @@ export const TableViewTable = compose(
             const emptyRows = rowsPerPage - min(rowsPerPage, data.length - page * rowsPerPage);
             return (
                 <Paper className={classes.root}>
-                    <TableViewTableToolbar
+                    <TeamTableToolbar
                         onRequestFilter={this.handleRequestFilter}
                         columnNames={map(columns, column => column.name)}
                     />
                     <div className={classes.tableWrapper}>
                         <Table>
-                            <TableViewTableHead
+                            <TeamTableHead
                                 columns={filter(columns, column => filterColumns.indexOf(column.name) === -1 || column.name === 'Team Number')}
                                 onRequestSort={this.handleRequestSort}
                                 order={order}
@@ -214,16 +214,12 @@ export const TableViewTable = compose(
     }
 );
 
-interface TableConnectProps {
-    settings: Array<CalculationSetting>
-}
-
-interface TableViewTableProps extends TableConnectProps, WithStyles<typeof styles> {
+interface TeamTableProps extends WithStyles<typeof styles> {
     teams: Teams,
     metrics: Metrics
 }
 
-interface TableViewTableState {
+interface TeamTableState {
     columns: Array<Column>,
     data: Array<Row>,
     order: 'asc' | 'desc',
@@ -233,6 +229,4 @@ interface TableViewTableState {
     rowsPerPage: number
 }
 
-interface Row {
-    [columnName: string]: string | number
-}
+export default TeamTable;

@@ -12,13 +12,13 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import TableChartIcon from '@material-ui/icons/TableChart';
 import HomeIcon from '@material-ui/icons/Home';
 import CloudUpload from '@material-ui/icons/CloudUpload';
-import { TableView } from './TableView';
-import { Home } from './Home';
+import TableView from '@robot-analytics/routes/TableView';
+import Home from '@robot-analytics/routes/Home';
 import { Switch, Route } from 'react-router-dom';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
-import { NavigationItem } from '@robot-analytics/components/NavigationItem';
+import { NavigationItem } from '@robot-analytics/routes/Main/NavigationItem';
 import { store } from '@robot-analytics/state/store'
 import { addData } from '@robot-analytics/state/actions';
 import { processRsData } from '@robot-analytics/processing/scoutFormatter';

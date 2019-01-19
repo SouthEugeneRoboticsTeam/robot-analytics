@@ -25,7 +25,7 @@ const styles = (theme: Theme) => createStyles({
 });
 
 export const Home = (uploadFile: Function) => withStyles(styles)(
-    class extends React.Component<HomeProps> {
+    class extends React.Component<WithStyles<typeof styles>> {
         render() {
             const { classes } = this.props;
             return (
@@ -60,5 +60,4 @@ export const Home = (uploadFile: Function) => withStyles(styles)(
     }
 );
 
-interface HomeProps extends WithStyles<typeof styles> { }
-
+export default Home
