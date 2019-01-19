@@ -17,7 +17,7 @@ import { reduce, forEach, map } from 'lodash';
 import { Teams } from '@robot-analytics/data/team';
 import { calculations } from '@robot-analytics/data/calculations';
 import { CalculationSetting } from '@robot-analytics/routes/TableView';
-import { Metrics } from '@robot-analytics/datametric';
+import { Metrics } from '@robot-analytics/data/metric';
 
 const styles = (theme: Theme) => createStyles({
     selectContainer: {

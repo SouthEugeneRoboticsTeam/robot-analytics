@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { Teams } from '@robot-analytics/datateam';
-import { CalculationSetting } from '@robot-analytics/routesTableView';
+import { Teams } from '@robot-analytics/data/team';
+import { CalculationSetting } from '@robot-analytics/routes/TableView';
 import { forEach, keys, map, reduce, slice, orderBy, filter, includes } from 'lodash';
-import { calculations } from '@robot-analytics/datacalculations';
+import { calculations } from '@robot-analytics/data/calculations';
 import { createStyles, Table, Theme, withStyles, WithStyles, Paper, TableBody, TableRow, TableCell,
     TablePagination } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { AppState } from '@robot-analytics/statestate';
+import { AppState } from '@robot-analytics/state/state';
 import { compose } from 'redux';
-import { Column, TableViewTableHead } from '@robot-analytics/componentsTableViewTableHead';
-import { Metrics, ScoutMetricType } from '@robot-analytics/datametric';
+import { Column, TableViewTableHead } from '@robot-analytics/components/TableViewTableHead';
+import { Metrics, ScoutMetricType } from '@robot-analytics/data/metric';
 import { min } from 'mathjs';
-import { TableViewTableToolbar } from '@robot-analytics/componentsTableViewTableToolbar';
+import { TableViewTableToolbar } from '@robot-analytics/components/TableViewTableToolbar';
 
 const styles = (theme: Theme) => createStyles({
     root: {
