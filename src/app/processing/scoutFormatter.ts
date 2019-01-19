@@ -1,9 +1,9 @@
 import { Scouts } from '@robot-analytics/data/scout'
 import { RsData, toScoutMetricType } from '@robot-analytics/data/rsData';
-import { Teams } from '@robot-analytics/datateam';
+import { Teams } from '@robot-analytics/data/team';
 import { reduce, keys } from 'lodash';
-import { store } from '@robot-analytics/statestore';
-import { Metrics } from '@robot-analytics/datametric';
+import { store } from '@robot-analytics/state/store';
+import { Metrics } from '@robot-analytics/data/metric';
 
 // Convert RsTeams to Teams
 export const processRsData = (rsData: RsData) => (

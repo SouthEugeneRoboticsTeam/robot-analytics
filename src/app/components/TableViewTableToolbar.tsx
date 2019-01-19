@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { withStyles, Theme, Typography, WithStyles, Toolbar } from '@material-ui/core';
-import { TableViewTableFilterButton } from '@robot-analytics/componentsTableViewTableFilterButton';
+import { TableViewTableFilterButton } from '@robot-analytics/components/TableViewTableFilterButton';
 
 const styles = (theme: Theme) => ({
     root: {

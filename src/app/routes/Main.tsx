@@ -20,8 +20,8 @@ import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 import { NavigationItem } from '@robot-analytics/components/NavigationItem';
 import { store } from '@robot-analytics/state/store'
-import { addData } from '@robot-analytics/stateactions';
-import { processRsData } from '@robot-analytics/processingscoutFormatter';
+import { addData } from '@robot-analytics/state/actions';
+import { processRsData } from '@robot-analytics/processing/scoutFormatter';
 import { RouterProps } from 'react-router';
 
 const drawerWidth = 240;

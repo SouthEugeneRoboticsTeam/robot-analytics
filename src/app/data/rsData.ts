@@ -1,4 +1,4 @@
-import { ScoutMetricType } from '@robot-analytics/datametric';
+import { ScoutMetricType } from '@robot-analytics/data/metric';
 
 export interface RsData {
     teams: RsTeams
