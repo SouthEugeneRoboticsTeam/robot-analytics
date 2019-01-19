@@ -3,7 +3,7 @@ import { ActionType } from 'typesafe-actions';
 import { Teams } from '../data/team';
 import { ActionTypes } from './actions';
 import * as actions from './actions';
-import { Metrics } from '@robot-analytics/datametric';
+import { Metrics } from '@robot-analytics/data/metric';
 
 const teams = (state: Teams = {}, action: ActionType<typeof actions>) => {
     switch (action.type) {

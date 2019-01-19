@@ -9,12 +9,12 @@
     "baseUrl": "./src",
     "resolveJsonModule": true,
     "paths": {
-      "@robot-analytics/components*": ["app/components/*"],
-      "@robot-analytics/data*": ["app/data/*"],
-      "@robot-analytics/routes*": ["app/routes/*"],
-      "@robot-analytics/state*": ["app/state/*"],
+      "@robot-analytics/components/*": ["app/components/*"],
+      "@robot-analytics/data/*": ["app/data/*"],
+      "@robot-analytics/routes/*": ["app/routes/*"],
+      "@robot-analytics/state/*": ["app/state/*"],
       "@robot-analytics/*": ["app/*"],
-      "@robot-analytics/processing*": ["app/processing/*"]
+      "@robot-analytics/processing": ["app/processing/*"]
     }
   },
   "include": [

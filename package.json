@@ -51,5 +51,8 @@
     "redux": "^4.0.0",
     "typesafe-actions": "^2.0.4",
     "utility-types": "^2.0.0"
+  },
+  "jest": {
+    "moduleDirectories": ["node_modules", "src"]
   }
 }
