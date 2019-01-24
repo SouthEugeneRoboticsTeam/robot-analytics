@@ -12,7 +12,7 @@ import { calculations } from '@robot-analytics/data/calculations';
 const styles = (theme: Theme) => createStyles({
     root: {
         width: '100%',
-        height: 500
+        height: '100%'
     },
     cell: {
         flex: 1,
@@ -141,7 +141,7 @@ const TeamTable = compose(
             const { sortBy, sortDirection } = this.state;
             console.log("Table is rendering");
             return (
-                <Paper className={classes.root}>
+                <div className={classes.root}>
                     <AutoSizer>
                         {({ width, height }) => (
                             <MultiGrid
@@ -162,10 +162,14 @@ const TeamTable = compose(
                                 sortDirection={sortDirection}
                                 overscanColumnCount={3}
                                 overscanRowCount={5}
+                                enableFixedColumnScroll
+                                enableFixedRowScroll
+                                hideTopRightGridScrollbar
+                                hideBottomLeftGridScrollbar
                             />
                         )}
                     </AutoSizer>
-                </Paper>
+                </div>
             );
         }
     }
