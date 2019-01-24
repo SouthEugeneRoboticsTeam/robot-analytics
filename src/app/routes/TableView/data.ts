@@ -1,9 +1,7 @@
-export interface Row {
-    [columnName: string]: string | number
+export interface RowData {
+    [columnName: string]: any
 }
 
-export interface Column {
-    name: string,
-    numeric: boolean,
-    disablePadding: boolean
+export interface ColumnData {
+    name: string
 }

@@ -1,232 +1,186 @@
 import * as React from 'react';
-import { Teams } from '@robot-analytics/data/team';
 import { forEach, keys, map, reduce, slice, orderBy, filter, includes } from 'lodash';
-import { calculations } from '@robot-analytics/data/calculations';
-import { createStyles, Table, Theme, withStyles, WithStyles, Paper, TableBody, TableRow, TableCell,
-    TablePagination } from '@material-ui/core';
+import { createStyles, Theme, withStyles, WithStyles, Paper, TableCell, TableSortLabel } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { AppState } from '@robot-analytics/state/state';
 import { compose } from 'redux';
-import TeamTableHead from '@robot-analytics/routes/TableView/TeamTableHead';
-import { Column } from '@robot-analytics/routes/TableView/data';
-import { Metrics, ScoutMetricType } from '@robot-analytics/data/metric';
-import { min } from 'mathjs';
-import TeamTableToolbar from '@robot-analytics/routes/TableView/TeamTableToolbar';
-import { Row } from '@robot-analytics/routes/TableView/data';
+import { ColumnData, RowData } from '@robot-analytics/routes/TableView/data';
+import { AutoSizer, MultiGrid, GridCellProps } from 'react-virtualized';
+import classNames = require('classnames');
+import { calculations } from '@robot-analytics/data/calculations';
 
 const styles = (theme: Theme) => createStyles({
     root: {
         width: '100%',
-        marginTop: theme.spacing.unit * 3,
+        height: 500
     },
-    table: {
-        minWidth: 1020,
+    cell: {
+        flex: 1,
+        background: 'transparent'
     },
-    tableWrapper: {
-        overflowX: 'auto'
+    grid: {
+        fontFamily: theme.typography.fontFamily,
+        fontSize: theme.typography.fontSize
+    },
+    fixedGrid: {
+        background: 'whitesmoke'
+    },
+    topLeftGrid: {
+        borderRight: '1px solid grey',
+        borderBottom: '1px solid grey'
+    },
+    bottomLeftGrid: {
+        borderRight: '1px solid grey'
+    },
+    topRightGrid: {
+        borderBottom: '1px solid grey'
+    },
+    flexContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        boxSizing: 'border-box',
     }
 });
 
 const TeamTable = compose(
     connect(
-        (state: AppState) => ({
-            teams: state.teams,
-            metrics: state.metrics
+        ({ teams, metrics }: AppState) => ({
+            columns: [
+                { name: 'Team Number' },
+                { name: 'Scout Count' },
+                ...reduce(metrics, (acc: Array<ColumnData>, metric, metricName) => {
+                    forEach(calculations, (calculation, calculationName) => {
+                        if (calculation.inputTypes.indexOf(metric.type) !== -1) {
+                            acc.push({ name: `${metricName} (${calculationName})` })
+                        }
+                    });
+                    return acc;
+                }, [])
+            ],
+            rows: map(teams, (team, teamNumber) => ({
+                'Team Number': parseInt(teamNumber),
+                'Scout Count': keys(team.scouts).length,
+                ...reduce(metrics, (row: RowData, metric, metricName) => {
+                    forEach(calculations, (calculation, calculationName) => {
+                        if (calculation.inputTypes.indexOf(metric.type) !== -1) {
+                            row[`${metricName} (${calculationName})`] = calculation.invoke(
+                                ...map(team.scouts, scout => (
+                                    scout.metrics[metricName]
+                                ))
+                            ).value
+                        }
+                    });
+                    return row;
+                }, {})
+            })),
+            fixedColumnCount: 2,
+            rowHeight: 56
         })
     ),
     withStyles(styles)
 )(
     class extends React.Component<TeamTableProps, TeamTableState> {
         state: TeamTableState = {
-            columns: [
-                { name: 'Team number', numeric: true, disablePadding: false },
-                { name: 'Scout count', numeric: true, disablePadding: false }
-            ],
-            data: [],
-            order: 'asc',
-            orderProperty: 'Team number',
-            page: 0,
-            rowsPerPage: 5,
-            filterColumns: []
+            sortDirection: 'asc',
+            sortBy: 'Team Number',
         };
 
-        handleRequestSort = (event: React.MouseEvent<HTMLElement>, property: string) => {
-            this.setState({
-                order: this.state.orderProperty === property && this.state.order === 'asc' ? 'desc' : 'asc',
-                orderProperty: property
-            });
-        };
+        sortedRows = orderBy(this.props.rows, [this.state.sortBy], [this.state.sortDirection]);
 
-        handleRequestFilter = (columnNames: Array<string>) => {
-            this.setState({ filterColumns: columnNames })
-        };
-
-        handleChangePage = (event: React.MouseEvent<HTMLButtonElement>, page: number) => {
-            this.setState({ page });
-        };
-
-        handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-            if (typeof event.target.value === 'number') {
-                this.setState({ rowsPerPage: event.target.value });
+        limitCharacters = (data: any) => {
+            if (typeof data === 'string' && data.length > 50) {
+                return data.substring(0, 47) + '...';
+            } else {
+                return data;
             }
         };
 
-        componentWillMount() {
-            this.setState({
-                columns: [
-                    ...this.state.columns,
-                    ...reduce(this.props.metrics, (acc: Array<Column>, metric, metricName) => {
-                        forEach(calculations, (calculation, calculationName) => {
-                            if (calculation.inputTypes.indexOf(metric.type) !== -1) {
-                                acc.push({
-                                    name: `${metricName} (${calculationName})`,
-                                    numeric: calculation.outputType === ScoutMetricType.NUMBER,
-                                    disablePadding: false
-                                })
-                            }
-                        });
-                        return acc;
-                    }, [])
-                ],
-                data: map(this.props.teams, (team, teamNumber) => (
-                    {
-                        ['Team number']: parseInt(teamNumber),
-                        ['Scout count']: keys(team.scouts).length,
-                        ...reduce(this.props.metrics, (row: Row, metric, metricName) => {
-                            forEach(calculations, (calculation, calculationName) => {
-                                if (calculation.inputTypes.indexOf(metric.type) !== -1) {
-                                    row[`${metricName} (${calculationName})`] = calculation.invoke(
-                                        ...map(team.scouts, scout => (
-                                            scout.metrics[metricName]
-                                        ))
-                                    ).value
+        cellRenderer = ({ style, rowIndex, columnIndex }: GridCellProps) => {
+            const { classes, columns } = this.props;
+            const { sortBy, sortDirection } = this.state;
+            return (
+                <TableCell
+                    component="div"
+                    style={style}
+                    className={classNames(classes.cell, classes.flexContainer)}
+                    variant="head"
+                    key={`${columnIndex}.${rowIndex}`}
+                >
+                    {(rowIndex === 0) ? (
+                        <TableSortLabel
+                            active={columns[columnIndex].name === sortBy}
+                            direction={sortDirection}
+                            onClick={() => {
+                                if (columns[columnIndex].name === sortBy) {
+                                    this.setState({
+                                        sortDirection: sortDirection === 'asc' ? 'desc' : 'asc'
+                                    })
+                                } else {
+                                    this.setState({
+                                        sortBy: columns[columnIndex].name,
+                                        sortDirection: 'asc'
+                                    })
                                 }
-                            });
-                            return row;
-                        }, {})
-                    }
-                )),
-            })
+                            }}
+                        >
+                            {columns[columnIndex].name}
+                        </TableSortLabel>
+                    ) : (
+                        this.limitCharacters(this.sortedRows[rowIndex - 1][columns[columnIndex].name])
+                    )}
+                </TableCell>
+            );
         };
 
-        componentWillReceiveProps(nextProps: Readonly<TeamTableProps>) {
-            this.setState({
-                columns: [
-                    ...this.state.columns,
-                    ...reduce(nextProps.metrics, (acc: Array<Column>, metric, metricName) => {
-                        forEach(calculations, (calculation, calculationName) => {
-                            if (calculation.inputTypes.indexOf(metric.type) !== -1) {
-                                acc.push({
-                                    name: `${metricName} (${calculationName})`,
-                                    numeric: calculation.outputType === ScoutMetricType.NUMBER,
-                                    disablePadding: false
-                                })
-                            }
-                        });
-                        return acc;
-                    }, [])
-                ],
-                data: map(nextProps.teams, (team, teamNumber) => (
-                    {
-                        ['Team number']: parseInt(teamNumber),
-                        ['Scout count']: keys(team.scouts).length,
-                        ...reduce(nextProps.metrics, (row: Row, metric, metricName) => {
-                            forEach(calculations, (calculation, calculationName) => {
-                                if (calculation.inputTypes.indexOf(metric.type) !== -1) {
-                                    row[`${metricName} (${calculationName})`] = calculation.invoke(
-                                        ...map(team.scouts, scout => (
-                                            scout.metrics[metricName]
-                                        ))
-                                    ).value
-                                }
-                            });
-                            return row;
-                        }, {})
-                    }
-                )),
-            })
+        componentWillUpdate(nextProps: Readonly<TeamTableProps>, nextState: Readonly<TeamTableState>) {
+            this.sortedRows = orderBy(nextProps.rows, [nextState.sortBy], [nextState.sortDirection])
         }
 
         render() {
-            const { classes } = this.props;
-            const { data, columns, order, orderProperty, page, rowsPerPage, filterColumns } = this.state;
-            const emptyRows = rowsPerPage - min(rowsPerPage, data.length - page * rowsPerPage);
+            const { classes, columns, rows, rowHeight, fixedColumnCount } = this.props;
+            const { sortBy, sortDirection } = this.state;
+            console.log("Table is rendering");
             return (
                 <Paper className={classes.root}>
-                    <TeamTableToolbar
-                        onRequestFilter={this.handleRequestFilter}
-                        columnNames={map(columns, column => column.name)}
-                    />
-                    <div className={classes.tableWrapper}>
-                        <Table>
-                            <TeamTableHead
-                                columns={filter(columns, column => filterColumns.indexOf(column.name) === -1 || column.name === 'Team Number')}
-                                onRequestSort={this.handleRequestSort}
-                                order={order}
-                                orderBy={orderProperty}
-                                rowCount={data.length}
+                    <AutoSizer>
+                        {({ width, height }) => (
+                            <MultiGrid
+                                cellRenderer={this.cellRenderer}
+                                rowCount={rows.length + 1}
+                                rowHeight={rowHeight}
+                                height={height}
+                                width={width}
+                                columnCount={columns.length}
+                                columnWidth={({ index }) => index < fixedColumnCount ? 120 : 200}
+                                fixedColumnCount={fixedColumnCount}
+                                fixedRowCount={1}
+                                classNameTopLeftGrid={classNames(classes.grid, classes.topLeftGrid, classes.fixedGrid)}
+                                classNameBottomLeftGrid={classNames(classes.grid, classes.bottomLeftGrid, classes.fixedGrid)}
+                                classNameTopRightGrid={classNames(classes.grid, classes.topRightGrid, classes.fixedGrid)}
+                                classNameBottomRightGrid={classes.grid}
+                                sortBy={sortBy}
+                                sortDirection={sortDirection}
+                                overscanColumnCount={3}
+                                overscanRowCount={5}
                             />
-                            <TableBody>
-                                {map(slice(orderBy(data, [orderProperty], [order]), page * rowsPerPage, page * rowsPerPage + rowsPerPage), row => {
-                                    return (
-                                        <TableRow
-                                            hover
-                                            tabIndex={-1}
-                                            key={row['Team number']}
-                                        >
-                                            {map(
-                                                filter(row, (cell, cellName) => (
-                                                    filterColumns.indexOf(cellName) === -1 || cellName === 'Team number'
-                                                )), (cell, cellName) => (
-                                                <TableCell numeric={typeof cell === 'number'} key={`${row['Team number']}-${cellName}`}>
-                                                    {cell}
-                                                </TableCell>
-                                            ))}
-                                        </TableRow>
-                                    )
-                                })}
-                                {emptyRows > 0 && (
-                                    <TableRow style={{ height: 49 * emptyRows }}>
-                                        <TableCell colSpan={6} />
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={data.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        backIconButtonProps={{
-                            'aria-label': 'Previous Page',
-                        }}
-                        nextIconButtonProps={{
-                            'aria-label': 'Next Page',
-                        }}
-                        onChangePage={this.handleChangePage}
-                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                    />
+                        )}
+                    </AutoSizer>
                 </Paper>
-            )
+            );
         }
     }
 );
 
 interface TeamTableProps extends WithStyles<typeof styles> {
-    teams: Teams,
-    metrics: Metrics
+    columns: Array<ColumnData>
+    rows: Array<RowData>
+    fixedColumnCount: number
+    rowHeight: number
 }
 
 interface TeamTableState {
-    columns: Array<Column>,
-    data: Array<Row>,
-    order: 'asc' | 'desc',
-    orderProperty: string,
-    filterColumns: Array<string>
-    page: number,
-    rowsPerPage: number
+    sortBy: string,
+    sortDirection: 'asc' | 'desc',
 }
 
 export default TeamTable;
