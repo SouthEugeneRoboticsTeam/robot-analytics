@@ -1,19 +1,16 @@
 import * as React from 'react';
 import { forEach, keys, map, reduce, slice, orderBy, filter, includes } from 'lodash';
-import { createStyles, Theme, withStyles, WithStyles, Paper, TableCell, TableSortLabel } from '@material-ui/core';
+import { createStyles, Theme, withStyles, WithStyles, TableCell, TableSortLabel } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { AppState } from '@robot-analytics/state/state';
 import { compose } from 'redux';
 import { ColumnData, RowData } from '@robot-analytics/routes/TableView/data';
-import { AutoSizer, MultiGrid, GridCellProps } from 'react-virtualized';
+import { MultiGrid, GridCellProps } from 'react-virtualized';
 import classNames = require('classnames');
 import { calculations } from '@robot-analytics/data/calculations';
 
 const styles = (theme: Theme) => createStyles({
-    root: {
-        width: '100%',
-        height: '100%'
-    },
+    root: { width: '100%', height: '100%' },
     cell: {
         flex: 1,
         background: 'transparent'
@@ -44,7 +41,7 @@ const styles = (theme: Theme) => createStyles({
 
 const TeamTable = compose(
     connect(
-        ({ teams, metrics }: AppState) => ({
+        ({ teams, metrics }: AppState, ownProps: TeamTableOwnProps) => ({
             columns: [
                 { name: 'Team Number' },
                 { name: 'Scout Count' },
@@ -74,7 +71,8 @@ const TeamTable = compose(
                 }, {})
             })),
             fixedColumnCount: 2,
-            rowHeight: 56
+            rowHeight: 56,
+            ...ownProps
         })
     ),
     withStyles(styles)
@@ -137,39 +135,29 @@ const TeamTable = compose(
         }
 
         render() {
-            const { classes, columns, rows, rowHeight, fixedColumnCount } = this.props;
+            const { classes, columns, rows, rowHeight, fixedColumnCount, width, height } = this.props;
             const { sortBy, sortDirection } = this.state;
             console.log("Table is rendering");
             return (
-                <div className={classes.root}>
-                    <AutoSizer>
-                        {({ width, height }) => (
-                            <MultiGrid
-                                cellRenderer={this.cellRenderer}
-                                rowCount={rows.length + 1}
-                                rowHeight={rowHeight}
-                                height={height}
-                                width={width}
-                                columnCount={columns.length}
-                                columnWidth={({ index }) => index < fixedColumnCount ? 120 : 200}
-                                fixedColumnCount={fixedColumnCount}
-                                fixedRowCount={1}
-                                classNameTopLeftGrid={classNames(classes.grid, classes.topLeftGrid, classes.fixedGrid)}
-                                classNameBottomLeftGrid={classNames(classes.grid, classes.bottomLeftGrid, classes.fixedGrid)}
-                                classNameTopRightGrid={classNames(classes.grid, classes.topRightGrid, classes.fixedGrid)}
-                                classNameBottomRightGrid={classes.grid}
-                                sortBy={sortBy}
-                                sortDirection={sortDirection}
-                                overscanColumnCount={3}
-                                overscanRowCount={5}
-                                enableFixedColumnScroll
-                                enableFixedRowScroll
-                                hideTopRightGridScrollbar
-                                hideBottomLeftGridScrollbar
-                            />
-                        )}
-                    </AutoSizer>
-                </div>
+                <MultiGrid
+                    cellRenderer={this.cellRenderer}
+                    rowCount={rows.length + 1}
+                    rowHeight={rowHeight}
+                    height={height}
+                    width={width}
+                    columnCount={columns.length}
+                    columnWidth={({ index }) => index < fixedColumnCount ? 120 : 200}
+                    fixedColumnCount={fixedColumnCount}
+                    fixedRowCount={1}
+                    classNameTopLeftGrid={classNames(classes.grid, classes.topLeftGrid, classes.fixedGrid)}
+                    classNameBottomLeftGrid={classNames(classes.grid, classes.bottomLeftGrid, classes.fixedGrid)}
+                    classNameTopRightGrid={classNames(classes.grid, classes.topRightGrid, classes.fixedGrid)}
+                    classNameBottomRightGrid={classes.grid}
+                    sortBy={sortBy}
+                    sortDirection={sortDirection}
+                    overscanColumnCount={3}
+                    overscanRowCount={5}
+                />
             );
         }
     }
@@ -179,7 +167,14 @@ interface TeamTableProps extends WithStyles<typeof styles> {
     columns: Array<ColumnData>
     rows: Array<RowData>
     fixedColumnCount: number
-    rowHeight: number
+    rowHeight: number,
+    width: number,
+    height: number
+}
+
+interface TeamTableOwnProps {
+    width: number,
+    height: number
 }
 
 interface TeamTableState {
