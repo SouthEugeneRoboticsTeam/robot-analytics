@@ -4,7 +4,7 @@ import TeamTable from '@robot-analytics/routes/TableView/TeamTable';
 import { AutoSizer } from 'react-virtualized/dist/es/AutoSizer';
 import { Paper } from '@material-ui/core';
 
-const TableView = class extends React.Component {
+class TableView extends React.Component {
     render() {
         return (
             <>
@@ -13,9 +13,9 @@ const TableView = class extends React.Component {
                 </div>
                 <div style={{ flex: '1 1 auto' }}>
                     <AutoSizer>
-                        {(metrics) => (
-                            <Paper style={metrics}>
-                                <TeamTable {...metrics} />
+                        {({ width, height }) => (
+                            <Paper style={{ width, height }}>
+                                <TeamTable width={width} height={height}/>
                             </Paper>
                         )}
                     </AutoSizer>
@@ -23,6 +23,6 @@ const TableView = class extends React.Component {
             </>
         );
     }
-};
+}
 
 export default TableView;
