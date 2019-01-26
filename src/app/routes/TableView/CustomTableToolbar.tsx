@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Toolbar, Theme, WithStyles, createStyles, withStyles, Typography } from '@material-ui/core';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import { compose } from 'redux';
+import { ColumnData } from '@robot-analytics/routes/TableView/data';
+import FilterMenu from '@robot-analytics/routes/TableView/FilterMenu';
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -30,19 +32,22 @@ const styles = (theme: Theme) => createStyles({
     }
 });
 
-const CustomTableToolbar = ({ classes, theme, title }: CustomTableToolbarProps) => (
+const CustomTableToolbar = ({ classes, theme, title, columns, onFilter }: CustomTableToolbarProps) => (
     <Toolbar className={classes.root}>
         <div className={classes.title}>
             <Typography variant="title" style={{ color: theme.palette.text.secondary }}>{title}</Typography>
         </div>
         <div className={classes.spacer} />
         <div className={classes.actions}>
+            <FilterMenu onFilter={onFilter} columns={columns} />
         </div>
     </Toolbar>
 );
 
 interface CustomTableToolbarProps extends WithStyles<typeof styles, true> {
-    title: string
+    title: string,
+    columns: Array<ColumnData>
+    onFilter: (filterRequest: Array<ColumnData>) => void
 }
 
 export default compose(withStyles(styles, { withTheme: true }))(CustomTableToolbar);

@@ -2,13 +2,14 @@ import * as React from 'react';
 import CustomTableBody from '@robot-analytics/routes/TableView/CustomTableBody';
 import { ColumnData, RowData } from '@robot-analytics/routes/TableView/data';
 import CustomTableToolbar from '@robot-analytics/routes/TableView/CustomTableToolbar';
-import Typography from '@robot-analytics/routes/TableView/index';
 import { AutoSizer } from 'react-virtualized';
+import { includes, filter } from 'lodash';
 
 class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
     state: CustomTableState = {
         sortBy: null,
-        sortDirection: 'asc'
+        sortDirection: 'asc',
+        filterOut: []
     };
 
     onSort = (sortRequest: string | null) => {
@@ -20,19 +21,23 @@ class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
         }
     };
 
+    onFilter = (filterRequest: Array<ColumnData>) => {
+        this.setState({ filterOut: filterRequest })
+    };
+
     render() {
         const { columns, rows, width, height } = this.props;
-        const { sortDirection, sortBy } = this.state;
+        const { sortDirection, sortBy, filterOut } = this.state;
         return (
             <div style={{ display: 'flex', flexFlow: 'column', width, height }}>
                 <div style={{ flex: '0 1 auto', display: 'flex', width }}>
-                    <CustomTableToolbar title="Team Graph" />
+                    <CustomTableToolbar title="Team Graph" onFilter={this.onFilter} columns={columns} />
                 </div>
                 <div style={{ flex: '1 1 auto', display: 'flex' }}>
                     <AutoSizer>
                         {({ width, height }) => (
                             <CustomTableBody
-                                columns={columns}
+                                columns={filter(columns, c => !includes(filterOut, c))}
                                 rows={rows}
                                 sortBy={sortBy}
                                 sortDirection={sortDirection}
@@ -60,6 +65,7 @@ interface CustomTableProps {
 interface CustomTableState {
     sortBy: string | null,
     sortDirection: 'asc' | 'desc'
+    filterOut: Array<ColumnData>
 }
 
 export default CustomTable;
