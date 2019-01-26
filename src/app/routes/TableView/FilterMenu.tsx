@@ -36,6 +36,12 @@ class FilterMenu extends React.Component<FilterMenuProps, FilterMenuState> {
         });
     };
 
+    handleSelectAll = () => {
+        this.setState({
+            filteredColumns: this.state.filteredColumns.length === 0 ? this.props.columns : []
+        });
+    };
+
     render() {
         const { columns } = this.props;
         const { anchorEl, filteredColumns } = this.state;
@@ -50,6 +56,19 @@ class FilterMenu extends React.Component<FilterMenuProps, FilterMenuState> {
                     <FilterListIcon/>
                 </IconButton>
                 <Menu open={Boolean(anchorEl)} onClose={this.onExit} anchorEl={anchorEl}>
+                    <MenuItem
+                        role="checkbox"
+                        aria-checked={filteredColumns.length === 0}
+                        onClick={this.handleSelectAll}
+                        divider
+                    >
+                        <Checkbox
+                            checked={filteredColumns.length === 0}
+                            onChange={this.handleSelectAll}
+                            indeterminate={filteredColumns.length > 0 && filteredColumns.length < columns.length}
+                        />
+                        <ListItemText>Select all</ListItemText>
+                    </MenuItem>
                     {map(columns, (column, index) => (
                         (column.noFilter) ? null : (
                             <MenuItem
