@@ -1,6 +1,9 @@
 import * as React from 'react';
 import CustomTableBody from '@robot-analytics/routes/TableView/CustomTableBody';
 import { ColumnData, RowData } from '@robot-analytics/routes/TableView/data';
+import CustomTableToolbar from '@robot-analytics/routes/TableView/CustomTableToolbar';
+import Typography from '@robot-analytics/routes/TableView/index';
+import { AutoSizer } from 'react-virtualized';
 
 class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
     state: CustomTableState = {
@@ -21,18 +24,27 @@ class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
         const { columns, rows, width, height } = this.props;
         const { sortDirection, sortBy } = this.state;
         return (
-            <div>
-                <CustomTableBody
-                    columns={columns}
-                    rows={rows}
-                    sortBy={sortBy}
-                    sortDirection={sortDirection}
-                    rowHeight={56}
-                    fixedColumnCount={2}
-                    width={width}
-                    height={height}
-                    onSort={this.onSort}
-                />
+            <div style={{ display: 'flex', flexFlow: 'column', width, height }}>
+                <div style={{ flex: '0 1 auto', display: 'flex', width }}>
+                    <CustomTableToolbar title="Team Graph" />
+                </div>
+                <div style={{ flex: '1 1 auto', display: 'flex' }}>
+                    <AutoSizer>
+                        {({ width, height }) => (
+                            <CustomTableBody
+                                columns={columns}
+                                rows={rows}
+                                sortBy={sortBy}
+                                sortDirection={sortDirection}
+                                rowHeight={56}
+                                fixedColumnCount={2}
+                                width={width}
+                                height={height}
+                                onSort={this.onSort}
+                            />
+                        )}
+                    </AutoSizer>
+                </div>
             </div>
         );
     }
