@@ -37,7 +37,8 @@ const TeamTable = connect(
             }, {})
         })),
         width,
-        height
+        height,
+        title: "Teams"
     })
 )(CustomTable);
 

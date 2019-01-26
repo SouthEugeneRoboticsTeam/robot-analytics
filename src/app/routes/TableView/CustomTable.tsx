@@ -26,12 +26,12 @@ class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
     };
 
     render() {
-        const { columns, rows, width, height } = this.props;
+        const { columns, rows, width, height, title } = this.props;
         const { sortDirection, sortBy, filterOut } = this.state;
         return (
             <div style={{ display: 'flex', flexFlow: 'column', width, height }}>
                 <div style={{ flex: '0 1 auto', display: 'flex', width }}>
-                    <CustomTableToolbar title="Team Graph" onFilter={this.onFilter} columns={columns} />
+                    <CustomTableToolbar title={title} onFilter={this.onFilter} columns={columns} />
                 </div>
                 <div style={{ flex: '1 1 auto', display: 'flex' }}>
                     <AutoSizer>
@@ -59,7 +59,8 @@ interface CustomTableProps {
     rows: Array<RowData>,
     columns: Array<ColumnData>,
     width: number,
-    height: number
+    height: number,
+    title: string
 }
 
 interface CustomTableState {
