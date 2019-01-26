@@ -9,8 +9,8 @@ import CustomTable from '@robot-analytics/routes/TableView/CustomTable';
 const TeamTable = connect(
     ({ teams, metrics }: AppState, { width, height }: TeamTableProps) => ({
         columns: [
-            { name: 'Team Number' },
-            { name: 'Scout Count' },
+            { name: 'Team Number', noFilter: true },
+            { name: 'Scout Count', noFilter: true },
             ...reduce(metrics, (acc: Array<ColumnData>, metric, metricName) => {
                 forEach(calculations, (calculation, calculationName) => {
                     if (calculation.inputTypes.indexOf(metric.type) !== -1) {

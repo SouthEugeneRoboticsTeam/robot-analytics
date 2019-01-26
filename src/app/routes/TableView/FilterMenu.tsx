@@ -51,18 +51,20 @@ class FilterMenu extends React.Component<FilterMenuProps, FilterMenuState> {
                 </IconButton>
                 <Menu open={Boolean(anchorEl)} onClose={this.onExit} anchorEl={anchorEl}>
                     {map(columns, (column, index) => (
-                        <MenuItem
-                            key={index}
-                            role="checkbox"
-                            aria-checked={!includes(filteredColumns, column)}
-                            onClick={this.createCheckboxChangeHandler(column)}
-                        >
-                            <Checkbox
-                                checked={!includes(filteredColumns, column)}
-                                onChange={this.createCheckboxChangeHandler(column)}
-                            />
-                            <ListItemText>{column.name}</ListItemText>
-                        </MenuItem>
+                        (column.noFilter) ? null : (
+                            <MenuItem
+                                key={index}
+                                role="checkbox"
+                                aria-checked={!includes(filteredColumns, column)}
+                                onClick={this.createCheckboxChangeHandler(column)}
+                            >
+                                <Checkbox
+                                    checked={!includes(filteredColumns, column)}
+                                    onChange={this.createCheckboxChangeHandler(column)}
+                                />
+                                <ListItemText>{column.name}</ListItemText>
+                            </MenuItem>
+                        )
                     ))}
                 </Menu>
             </>

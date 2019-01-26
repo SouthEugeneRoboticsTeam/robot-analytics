@@ -4,4 +4,5 @@ export interface RowData {
 
 export interface ColumnData {
     name: string
+    noFilter?: boolean
 }

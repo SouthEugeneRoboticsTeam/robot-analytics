@@ -4,6 +4,7 @@ import { lighten } from '@material-ui/core/styles/colorManipulator';
 import { compose } from 'redux';
 import { ColumnData } from '@robot-analytics/routes/TableView/data';
 import FilterMenu from '@robot-analytics/routes/TableView/FilterMenu';
+import { filter } from 'lodash';
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -39,7 +40,7 @@ const CustomTableToolbar = ({ classes, theme, title, columns, onFilter }: Custom
         </div>
         <div className={classes.spacer} />
         <div className={classes.actions}>
-            <FilterMenu onFilter={onFilter} columns={columns} />
+            <FilterMenu onFilter={onFilter} columns={filter(columns, c => !c.noFilter)} />
         </div>
     </Toolbar>
 );
