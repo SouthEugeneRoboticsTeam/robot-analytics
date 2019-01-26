@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Toolbar, Theme, WithStyles, createStyles, withStyles, Typography } from '@material-ui/core';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
+import { compose } from 'redux';
 
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -29,10 +30,10 @@ const styles = (theme: Theme) => createStyles({
     }
 });
 
-const CustomTableToolbar = ({ classes, title }: CustomTableToolbarProps) => (
+const CustomTableToolbar = ({ classes, theme, title }: CustomTableToolbarProps) => (
     <Toolbar className={classes.root}>
         <div className={classes.title}>
-            <Typography variant="title" style={{ color: 'grey' }}>{title}</Typography>
+            <Typography variant="title" style={{ color: theme.palette.text.secondary }}>{title}</Typography>
         </div>
         <div className={classes.spacer} />
         <div className={classes.actions}>
@@ -40,8 +41,8 @@ const CustomTableToolbar = ({ classes, title }: CustomTableToolbarProps) => (
     </Toolbar>
 );
 
-interface CustomTableToolbarProps extends WithStyles<typeof styles> {
+interface CustomTableToolbarProps extends WithStyles<typeof styles, true> {
     title: string
 }
 
-export default withStyles(styles)(CustomTableToolbar);
+export default compose(withStyles(styles, { withTheme: true }))(CustomTableToolbar);
