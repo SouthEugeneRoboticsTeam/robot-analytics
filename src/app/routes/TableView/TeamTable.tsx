@@ -3,42 +3,20 @@ import { forEach, keys, map, reduce, slice, orderBy, filter, includes } from 'lo
 import { connect } from 'react-redux';
 import { AppState } from '@robot-analytics/state/state';
 import { ColumnData, RowData } from '@robot-analytics/routes/TableView/data';
-import { calculations } from '@robot-analytics/data/calculations';
 import CustomTable from '@robot-analytics/routes/TableView/CustomTable';
+import { setTeamTableFilterOut } from '@robot-analytics/state/actions';
 
 const TeamTable = connect(
-    ({ teams, metrics }: AppState, { width, height }: TeamTableProps) => ({
-        columns: [
-            { name: 'Team Number', noFilter: true },
-            { name: 'Scout Count', noFilter: true },
-            ...reduce(metrics, (acc: Array<ColumnData>, metric, metricName) => {
-                forEach(calculations, (calculation, calculationName) => {
-                    if (calculation.inputTypes.indexOf(metric.type) !== -1) {
-                        acc.push({ name: `${metricName} (${calculationName})` })
-                    }
-                });
-                return acc;
-            }, [])
-        ],
-        rows: map(teams, (team, teamNumber) => ({
-            'Team Number': parseInt(teamNumber),
-            'Scout Count': keys(team.scouts).length,
-            ...reduce(metrics, (row: RowData, metric, metricName) => {
-                forEach(calculations, (calculation, calculationName) => {
-                    if (calculation.inputTypes.indexOf(metric.type) !== -1) {
-                        row[`${metricName} (${calculationName})`] = calculation.invoke(
-                            ...map(team.scouts, scout => (
-                                scout.metrics[metricName]
-                            ))
-                        ).value
-                    }
-                });
-                return row;
-            }, {})
-        })),
+    ({ teams, metrics, teamTable }: AppState, { width, height }: TeamTableProps) => ({
+        columns: teamTable.columns as Array<ColumnData>,
+        rows: teamTable.rows as Array<RowData>,
         width,
         height,
+        filterOut: teamTable.filterOut as Array<ColumnData>,
         title: "Teams"
+    }),
+    dispatch => ({
+        onFilter: (filterRequest: Array<ColumnData>) => dispatch(setTeamTableFilterOut(filterRequest))
     })
 )(CustomTable);
 

@@ -8,8 +8,7 @@ import { includes, filter } from 'lodash';
 class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
     state: CustomTableState = {
         sortBy: null,
-        sortDirection: 'asc',
-        filterOut: []
+        sortDirection: 'asc'
     };
 
     onSort = (sortRequest: string | null) => {
@@ -21,17 +20,13 @@ class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
         }
     };
 
-    onFilter = (filterRequest: Array<ColumnData>) => {
-        this.setState({ filterOut: filterRequest })
-    };
-
     render() {
-        const { columns, rows, width, height, title } = this.props;
-        const { sortDirection, sortBy, filterOut } = this.state;
+        const { columns, rows, width, height, title, onFilter, filterOut } = this.props;
+        const { sortDirection, sortBy } = this.state;
         return (
             <div style={{ display: 'flex', flexFlow: 'column', width, height }}>
                 <div style={{ flex: '0 1 auto', display: 'flex', width }}>
-                    <CustomTableToolbar title={title} onFilter={this.onFilter} columns={columns} />
+                    <CustomTableToolbar title={title} onFilter={onFilter} columns={columns} filterOut={filterOut} />
                 </div>
                 <div style={{ flex: '1 1 auto', display: 'flex' }}>
                     <AutoSizer>
@@ -61,12 +56,13 @@ interface CustomTableProps {
     width: number,
     height: number,
     title: string
+    filterOut: Array<ColumnData>
+    onFilter: (filterRequest: Array<ColumnData>) => void
 }
 
 interface CustomTableState {
     sortBy: string | null,
     sortDirection: 'asc' | 'desc'
-    filterOut: Array<ColumnData>
 }
 
 export default CustomTable;

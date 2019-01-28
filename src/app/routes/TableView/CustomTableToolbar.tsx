@@ -33,14 +33,14 @@ const styles = (theme: Theme) => createStyles({
     }
 });
 
-const CustomTableToolbar = ({ classes, theme, title, columns, onFilter }: CustomTableToolbarProps) => (
+const CustomTableToolbar = ({ classes, theme, title, columns, onFilter, filterOut }: CustomTableToolbarProps) => (
     <Toolbar className={classes.root}>
         <div className={classes.title}>
             <Typography variant="title" style={{ color: theme.palette.text.secondary }}>{title}</Typography>
         </div>
         <div className={classes.spacer} />
         <div className={classes.actions}>
-            <FilterMenu onFilter={onFilter} columns={filter(columns, c => !c.noFilter)} />
+            <FilterMenu onFilter={onFilter} columns={filter(columns, c => !c.noFilter)} filterOut={filterOut} />
         </div>
     </Toolbar>
 );
@@ -49,6 +49,7 @@ interface CustomTableToolbarProps extends WithStyles<typeof styles, true> {
     title: string,
     columns: Array<ColumnData>
     onFilter: (filterRequest: Array<ColumnData>) => void
+    filterOut: Array<ColumnData>
 }
 
 export default compose(withStyles(styles, { withTheme: true }))(CustomTableToolbar);

@@ -42,6 +42,10 @@ class FilterMenu extends React.Component<FilterMenuProps, FilterMenuState> {
         });
     };
 
+    componentWillReceiveProps(nextProps: Readonly<FilterMenuProps>, nextContext: any): void {
+        this.setState({ filteredColumns: nextProps.filterOut })
+    }
+
     render() {
         const { columns } = this.props;
         const { anchorEl, filteredColumns } = this.state;
@@ -94,6 +98,7 @@ class FilterMenu extends React.Component<FilterMenuProps, FilterMenuState> {
 interface FilterMenuProps {
     onFilter: (filterRequest: Array<ColumnData>) => void,
     columns: Array<ColumnData>
+    filterOut: Array<ColumnData>
 }
 
 interface FilterMenuState {
