@@ -48,8 +48,17 @@ const metrics = (state: Metrics = {}, action: ActionType<typeof actions>) => {
     }
 };
 
+const teamTableInitialState: TeamTableState = {
+    columns: [
+        { name: 'Team Number', noFilter: true },
+        { name: 'Scout Count', noFilter: true }
+    ],
+    rows: [],
+    filterOut: []
+};
+
 const teamTable = (
-    state: TeamTableState = { columns: [], rows: [], filterOut: [] },
+    state: TeamTableState = teamTableInitialState,
     action: ActionType<typeof actions>
 ): TeamTableState => {
     switch (action.type) {
