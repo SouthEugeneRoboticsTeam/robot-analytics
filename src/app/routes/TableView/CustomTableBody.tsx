@@ -14,6 +14,9 @@ const styles = (theme: Theme) => createStyles({
         flex: 1,
         background: 'transparent'
     },
+    topCell: {
+        borderBottom: 'none'
+    },
     grid: {
         fontFamily: theme.typography.fontFamily,
         fontSize: theme.typography.fontSize
@@ -58,7 +61,9 @@ const CustomTableBody = ({
                     <TableCell
                         component="div"
                         style={style}
-                        className={classNames(classes.cell, classes.flexContainer)}
+                        className={classNames(classes.cell, classes.flexContainer, {
+                            [classes.topCell]: rowIndex === 0
+                        })}
                         variant={rowIndex !== 0 ? 'body' : 'head'}
                         key={`${columnIndex}.${rowIndex}`}
                     >
