@@ -1,10 +1,37 @@
 import * as React from 'react';
-import Menu from '@material-ui/core/Menu';
 import { ColumnData } from '@robot-analytics/routes/TableView/data';
 import { map, includes, filter } from 'lodash';
-import MenuItem from '@material-ui/core/MenuItem';
-import { IconButton, Checkbox, ListItemText } from '@material-ui/core';
-import FilterListIcon from '@material-ui/icons/FilterList';
+import { IconButton, Checkbox, Popover, FormControlLabel, FormControl, FormGroup, WithStyles, withStyles,
+    Theme, createStyles, Typography, Divider } from '@material-ui/core';
+import ViewColumnIcon from '@material-ui/icons/ViewColumn';
+
+const styles = (theme: Theme) => createStyles({
+    root: {
+        padding: '16px 24px 16px 24px',
+        fontFamily: 'Roboto',
+    },
+    title: {
+        marginLeft: 8,
+        fontSize: 14,
+        color: theme.palette.text.secondary,
+        textAlign: 'left',
+        fontWeight: 500,
+    },
+    formGroup: {
+        marginTop: 8,
+    },
+    formControl: {},
+    checkbox: {
+        padding: 0,
+        width: 32,
+        height: 32,
+    },
+    label: {
+        fontSize: 15,
+        marginLeft: 8,
+        color: theme.palette.text.primary,
+    }
+});
 
 class FilterMenu extends React.Component<FilterMenuProps, FilterMenuState> {
     state: FilterMenuState = {
@@ -47,7 +74,7 @@ class FilterMenu extends React.Component<FilterMenuProps, FilterMenuState> {
     }
 
     render() {
-        const { columns } = this.props;
+        const { columns, classes } = this.props;
         const { anchorEl, filteredColumns } = this.state;
         return (
             <>
@@ -57,45 +84,50 @@ class FilterMenu extends React.Component<FilterMenuProps, FilterMenuState> {
                     aria-haspopup="true"
                     onClick={this.onClick}
                 >
-                    <FilterListIcon/>
+                    <ViewColumnIcon/>
                 </IconButton>
-                <Menu open={Boolean(anchorEl)} onClose={this.onExit} anchorEl={anchorEl}>
-                    <MenuItem
-                        role="checkbox"
-                        aria-checked={filteredColumns.length === 0}
-                        onClick={this.handleSelectAll}
-                        divider
-                    >
-                        <Checkbox
-                            checked={filteredColumns.length === 0}
-                            onChange={this.handleSelectAll}
-                            indeterminate={filteredColumns.length > 0 && filteredColumns.length < columns.length}
-                        />
-                        <ListItemText>Select all</ListItemText>
-                    </MenuItem>
-                    {map(columns, (column, index) => (
-                        (column.noFilter) ? null : (
-                            <MenuItem
-                                key={index}
-                                role="checkbox"
-                                aria-checked={!includes(filteredColumns, column)}
-                                onClick={this.createCheckboxChangeHandler(column)}
-                            >
-                                <Checkbox
-                                    checked={!includes(filteredColumns, column)}
-                                    onChange={this.createCheckboxChangeHandler(column)}
+                <Popover open={Boolean(anchorEl)} onClose={this.onExit} anchorEl={anchorEl}>
+                    <FormControl className={classes.root}>
+                        <Typography variant="caption" className={classes.title}>
+                            Select columns
+                        </Typography>
+                        <FormGroup className={classes.formGroup}>
+                            <FormControlLabel
+                                classes={{
+                                    root: classes.label
+                                }}
+                                label="Select all"
+                                control={<Checkbox
+                                    className={classes.checkbox}
+                                    checked={filteredColumns.length === 0}
+                                    onChange={this.handleSelectAll}
+                                    indeterminate={filteredColumns.length > 0 && filteredColumns.length < columns.length}
+                                />}
+                            />
+                        </FormGroup>
+                        <Divider/>
+                        <FormGroup className={classes.formGroup}>
+                            {map(columns, (column, index) => (
+                                <FormControlLabel
+                                    key={index}
+                                    label={column.name}
+                                    className={classes.label}
+                                    control={<Checkbox
+                                        className={classes.checkbox}
+                                        checked={!includes(filteredColumns, column)}
+                                        onChange={this.createCheckboxChangeHandler(column)}
+                                    />}
                                 />
-                                <ListItemText>{column.name}</ListItemText>
-                            </MenuItem>
-                        )
-                    ))}
-                </Menu>
+                            ))}
+                        </FormGroup>
+                    </FormControl>
+                </Popover>
             </>
         );
     }
 }
 
-interface FilterMenuProps {
+interface FilterMenuProps extends WithStyles<typeof styles> {
     onFilter: (filterRequest: Array<ColumnData>) => void,
     columns: Array<ColumnData>
     filterOut: Array<ColumnData>
@@ -106,4 +138,4 @@ interface FilterMenuState {
     anchorEl: HTMLElement | null
 }
 
-export default FilterMenu;
+export default withStyles(styles)(FilterMenu);
