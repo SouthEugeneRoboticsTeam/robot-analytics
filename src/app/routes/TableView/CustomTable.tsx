@@ -8,7 +8,9 @@ import { includes, filter } from 'lodash';
 class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
     state: CustomTableState = {
         sortBy: null,
-        sortDirection: 'asc'
+        sortDirection: 'asc',
+        filterMenuAnchorEl: null,
+        filteredColumns: []
     };
 
     onSort = (sortRequest: string | null) => {
@@ -20,13 +22,56 @@ class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
         }
     };
 
+    filterMenuCreateCheckboxChangeHandler = (column: ColumnData) => () => {
+        this.setState({
+            filteredColumns: (filteredColumns => {
+                switch (filteredColumns.indexOf(column)) {
+                    case -1:
+                        return [...filteredColumns, column];
+                    default:
+                        return filter(filteredColumns, c => c !== column)
+                }
+            })(this.state.filteredColumns)
+        });
+    };
+
+    componentWillReceiveProps(nextProps: Readonly<CustomTableProps>, nextContext: any): void {
+        this.setState({ filteredColumns: nextProps.filterOut })
+    }
+
+    filterMenuHandleSelectAll = () => {
+        this.setState({
+            filteredColumns: this.state.filteredColumns.length === 0 ? filter(this.props.columns, c => !c.noFilter) : []
+        });
+    };
+
+    onOpenFilterMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+        this.setState({ filterMenuAnchorEl: event.currentTarget });
+    };
+
+    onExitFilterMenu = () => {
+        this.setState({ filterMenuAnchorEl: null });
+        this.props.onFilter(this.state.filteredColumns);
+    };
+
     render() {
         const { columns, rows, width, height, title, onFilter, filterOut } = this.props;
-        const { sortDirection, sortBy } = this.state;
+        const { sortDirection, sortBy, filterMenuAnchorEl, filteredColumns } = this.state;
         return (
             <div style={{ display: 'flex', flexFlow: 'column', width, height }}>
                 <div style={{ flex: '0 1 auto', display: 'flex', width }}>
-                    <CustomTableToolbar title={title} onFilter={onFilter} columns={columns} filterOut={filterOut} />
+                    <CustomTableToolbar
+                        title={title}
+                        onFilter={onFilter}
+                        columns={columns}
+                        filterOut={filterOut}
+                        filterMenuAnchorEl={filterMenuAnchorEl}
+                        filteredColumns={filteredColumns}
+                        onOpenFilterMenu={this.onOpenFilterMenu}
+                        onExitFilterMenu={this.onExitFilterMenu}
+                        filterMenuCreateCheckboxChangeHandler={this.filterMenuCreateCheckboxChangeHandler}
+                        filterMenuHandleSelectAll={this.filterMenuHandleSelectAll}
+                    />
                 </div>
                 <div style={{ flex: '1 1 auto', display: 'flex' }}>
                     <AutoSizer>
@@ -51,18 +96,20 @@ class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
 }
 
 interface CustomTableProps {
-    rows: Array<RowData>,
-    columns: Array<ColumnData>,
-    width: number,
-    height: number,
+    rows: Array<RowData>
+    columns: Array<ColumnData>
+    width: number
+    height: number
     title: string
     filterOut: Array<ColumnData>
     onFilter: (filterRequest: Array<ColumnData>) => void
 }
 
 interface CustomTableState {
-    sortBy: string | null,
+    sortBy: string | null
     sortDirection: 'asc' | 'desc'
+    filterMenuAnchorEl: HTMLElement | null
+    filteredColumns: Array<ColumnData>
 }
 
 export default CustomTable;

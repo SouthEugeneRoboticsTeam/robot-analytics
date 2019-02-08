@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Toolbar, Theme, WithStyles, createStyles, withStyles, Typography } from '@material-ui/core';
+import { Toolbar, Theme, WithStyles, createStyles, withStyles, Typography, IconButton } from '@material-ui/core';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
+import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import { compose } from 'redux';
 import { ColumnData } from '@robot-analytics/routes/TableView/data';
 import FilterMenu from '@robot-analytics/routes/TableView/FilterMenu';
@@ -33,14 +34,46 @@ const styles = (theme: Theme) => createStyles({
     }
 });
 
-const CustomTableToolbar = ({ classes, theme, title, columns, onFilter, filterOut }: CustomTableToolbarProps) => (
+const CustomTableToolbar = ({
+    classes,
+    theme,
+    title,
+    columns,
+    onFilter,
+    filterOut,
+    onExitFilterMenu,
+    filterMenuAnchorEl,
+    filteredColumns,
+    onOpenFilterMenu,
+    filterMenuCreateCheckboxChangeHandler,
+    filterMenuHandleSelectAll
+}: CustomTableToolbarProps) => (
     <Toolbar className={classes.root}>
         <div className={classes.title}>
             <Typography variant="title" style={{ color: theme.palette.text.secondary }}>{title}</Typography>
         </div>
         <div className={classes.spacer} />
         <div className={classes.actions}>
-            <FilterMenu onFilter={onFilter} columns={filter(columns, c => !c.noFilter)} filterOut={filterOut} />
+            <div>
+                <IconButton
+                    aria-label="Filter list"
+                    aria-owns={filterMenuAnchorEl ? 'simple-menu' : undefined}
+                    aria-haspopup="true"
+                    onClick={onOpenFilterMenu}
+                >
+                    <ViewColumnIcon/>
+                </IconButton>
+                <FilterMenu
+                    onFilter={onFilter}
+                    columns={filter(columns, c => !c.noFilter)}
+                    filterOut={filterOut}
+                    anchorEl={filterMenuAnchorEl}
+                    filteredColumns={filteredColumns}
+                    onExit={onExitFilterMenu}
+                    createCheckboxChangeHandler={filterMenuCreateCheckboxChangeHandler}
+                    handleSelectAll={filterMenuHandleSelectAll}
+                />
+            </div>
         </div>
     </Toolbar>
 );
@@ -50,6 +83,12 @@ interface CustomTableToolbarProps extends WithStyles<typeof styles, true> {
     columns: Array<ColumnData>
     onFilter: (filterRequest: Array<ColumnData>) => void
     filterOut: Array<ColumnData>
+    filterMenuAnchorEl: HTMLElement | null
+    filteredColumns: Array<ColumnData>
+    onOpenFilterMenu: (event: React.MouseEvent<HTMLButtonElement>) => void
+    onExitFilterMenu: () => void
+    filterMenuCreateCheckboxChangeHandler: (column: ColumnData) => () => void
+    filterMenuHandleSelectAll: () => void
 }
 
 export default compose(withStyles(styles, { withTheme: true }))(CustomTableToolbar);
