@@ -10,7 +10,9 @@ class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
         sortBy: null,
         sortDirection: 'asc',
         filterMenuAnchorEl: null,
-        filteredColumns: []
+        filteredColumns: [],
+        searchOn: false,
+        searchBarText: ''
     };
 
     onSort = (sortRequest: string | null) => {
@@ -35,6 +37,10 @@ class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
         });
     };
 
+    setSearchOn = (searchOn: boolean) => {
+        this.setState({ searchOn, searchBarText: '' })
+    };
+
     componentWillReceiveProps(nextProps: Readonly<CustomTableProps>, nextContext: any): void {
         this.setState({ filteredColumns: nextProps.filterOut })
     }
@@ -54,9 +60,13 @@ class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
         this.props.onFilter(this.state.filteredColumns);
     };
 
+    onSearchBarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ searchBarText: event.currentTarget.value });
+    };
+
     render() {
         const { columns, rows, width, height, title, onFilter, filterOut } = this.props;
-        const { sortDirection, sortBy, filterMenuAnchorEl, filteredColumns } = this.state;
+        const { sortDirection, sortBy, filterMenuAnchorEl, filteredColumns, searchOn, searchBarText } = this.state;
         return (
             <div style={{ display: 'flex', flexFlow: 'column', width, height }}>
                 <div style={{ flex: '0 1 auto', display: 'flex', width }}>
@@ -71,6 +81,10 @@ class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
                         onExitFilterMenu={this.onExitFilterMenu}
                         filterMenuCreateCheckboxChangeHandler={this.filterMenuCreateCheckboxChangeHandler}
                         filterMenuHandleSelectAll={this.filterMenuHandleSelectAll}
+                        searchOn={searchOn}
+                        setSearchOn={this.setSearchOn}
+                        searchBarText={searchBarText}
+                        onSearchBarChange={this.onSearchBarChange}
                     />
                 </div>
                 <div style={{ flex: '1 1 auto', display: 'flex' }}>
@@ -78,7 +92,7 @@ class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
                         {({ width, height }) => (
                             <CustomTableBody
                                 columns={filter(columns, c => !includes(filterOut, c))}
-                                rows={rows}
+                                rows={searchBarText !== '' ? filter(rows, r => includes(`${r['Team Number']}`, searchBarText)) : rows}
                                 sortBy={sortBy}
                                 sortDirection={sortDirection}
                                 rowHeight={56}
@@ -110,6 +124,8 @@ interface CustomTableState {
     sortDirection: 'asc' | 'desc'
     filterMenuAnchorEl: HTMLElement | null
     filteredColumns: Array<ColumnData>
+    searchOn: boolean
+    searchBarText: string
 }
 
 export default CustomTable;
