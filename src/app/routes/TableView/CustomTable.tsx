@@ -3,7 +3,8 @@ import CustomTableBody from '@robot-analytics/routes/TableView/CustomTableBody';
 import { ColumnData, RowData } from '@robot-analytics/routes/TableView/data';
 import CustomTableToolbar from '@robot-analytics/routes/TableView/CustomTableToolbar';
 import { AutoSizer } from 'react-virtualized';
-import { includes, filter, forEach } from 'lodash';
+import { includes, filter } from 'lodash';
+import { filterRows } from '@robot-analytics/routes/TableView/filtering';
 
 class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
     state: CustomTableState = {
@@ -22,123 +23,6 @@ class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
         } else {
             this.setState({ sortDirection: sortDirection === 'asc' ? 'desc' : 'asc' })
         }
-    };
-
-    parseSearchBar = (searchBarText: string) => {
-        let token: string = '';
-        let first: string | number = '';
-        let operator: string = '';
-        let second: string | number = '';
-        let result: any = {};
-        let didSetTeamNumber = false;
-        let afterOperator = false;
-        let inQuotes = false;
-        forEach(searchBarText, char => {
-            switch (char) {
-                case '"': {
-                    inQuotes = !inQuotes;
-                    break;
-                }
-                // TODO fix broken > and < operators; cannot end on these, which causes borkage
-                case '!':
-                case '>':
-                case '<': {
-                    if (inQuotes) token += char;
-                    else if (!afterOperator) operator += char;
-                    break;
-                }
-                case '-':
-                case '=': {
-                    if (inQuotes) token += char;
-                    else {
-                        afterOperator = true;
-                        operator += char;
-                        first = token;
-                        token = '';
-                    }
-                    break;
-                }
-                case ',': {
-                    if (inQuotes) token += char;
-                    else {
-                        if (!afterOperator) {
-                            first = token;
-                            token = '';
-                            result['Team Number'] = ['<-', first];
-                            didSetTeamNumber = true;
-                        } else {
-                            second = token;
-                            token = '';
-                            result[first] = [operator, second];
-                        }
-                        first = '';
-                        operator = '';
-                        second = '';
-                        afterOperator = false;
-                    }
-                    break;
-                }
-                case ' ': {
-                    if (inQuotes) token += char;
-                    break;
-                }
-                default: {
-                    token += char;
-                }
-            }
-        });
-        if (!afterOperator) {
-            if (!didSetTeamNumber){
-                first = token;
-                result['Team Number'] = ['<-', first];
-            }
-        } else {
-            second = token;
-            result[first] = [operator, second]
-        }
-        return result;
-    };
-
-    filterRows = (rows: Array<RowData>): Array<RowData> => {
-        const filterOptions = this.parseSearchBar(this.state.searchBarText);
-        return filter(rows, row => {
-            let shouldInclude = false;
-            forEach(filterOptions, (value, key) => {
-                if (row[key] !== undefined) {
-                    switch (filterOptions[key][0]) {
-                        case '=': {
-                            shouldInclude = row[key] === parseFloat(filterOptions[key][1]);
-                            break;
-                        }
-                        case '!=': {
-                            shouldInclude = row[key] !== parseFloat(filterOptions[key][1]);
-                            break;
-                        }
-                        case '>': {
-                            shouldInclude = row[key] > parseFloat(filterOptions[key][1]);
-                            break;
-                        }
-                        case '<': {
-                            shouldInclude = row[key] < parseFloat(filterOptions[key][1]);
-                            break;
-                        }
-                        case '>=': {
-                            shouldInclude = row[key] >= parseFloat(filterOptions[key][1]);
-                            break;
-                        }
-                        case '<=': {
-                            shouldInclude = row[key] <= parseFloat(filterOptions[key][1]);
-                            break;
-                        }
-                        case '<-': {
-                            shouldInclude = includes(`${row[key]}`, filterOptions[key][1]);
-                            break;
-                        }
-                    }
-                }
-            });
-            return shouldInclude;
-        })
     };
 
     filterMenuCreateCheckboxChangeHandler = (column: ColumnData) => () => {
@@ -209,7 +93,7 @@ class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
                         {({ width, height }) => (
                             <CustomTableBody
                                 columns={filter(columns, c => !includes(filterOut, c))}
-                                rows={this.filterRows(rows)}
+                                rows={filterRows(rows)}
                                 sortBy={sortBy}
                                 sortDirection={sortDirection}
                                 rowHeight={56}
