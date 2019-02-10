@@ -92,8 +92,7 @@ export const parseSearchBar = (searchBarText: string) => {
     return result;
 };
 
-export const filterRows = (rows: Array<RowData>): Array<RowData> => {
-    const filterOptions = this.parseSearchBar(this.state.searchBarText);
+export const filterRows = (rows: Array<RowData>, filterOptions: any): Array<RowData> => {
     return filter(rows, row => {
         let shouldFilter = false;
         forEach(filterOptions, (value, key) => {
