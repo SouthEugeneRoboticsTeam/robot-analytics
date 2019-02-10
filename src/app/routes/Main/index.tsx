@@ -95,8 +95,13 @@ const styles = (theme: Theme) => createStyles({
         padding: theme.spacing.unit * 3,
         height: '100vh',
         overflow: 'auto',
+        display: 'flex',
+        flexFlow: 'column',
     },
-    appBarSpacer: theme.mixins.toolbar,
+    appBarSpacer: {
+        ...theme.mixins.toolbar,
+        flex: '0 1 auto'
+    },
 });
 
 export const Main = withStyles(styles)(

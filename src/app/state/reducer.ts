@@ -71,7 +71,7 @@ const teamTable = (
                     ...reduce(action.payload.metrics, (acc: Array<ColumnData>, metric, metricName) => {
                         forEach(calculations, (calculation, calculationName) => {
                             if (calculation.inputTypes.indexOf(metric.type) !== -1) {
-                                acc.push({ name: `[${metric.category}] ${metricName} (${calculationName})` })
+                                acc.push({ name: `${metricName} (${calculationName})` })
                             }
                         });
                         return acc;
@@ -83,7 +83,7 @@ const teamTable = (
                     ...reduce(action.payload.metrics, (row: RowData, metric, metricName) => {
                         forEach(calculations, (calculation, calculationName) => {
                             if (calculation.inputTypes.indexOf(metric.type) !== -1) {
-                                row[`[${metric.category}] ${metricName} (${calculationName})`] = calculation.invoke(
+                                row[`${metricName} (${calculationName})`] = calculation.invoke(
                                     ...map(team.scouts, scout => (
                                         scout.metrics[metricName]
                                     ))

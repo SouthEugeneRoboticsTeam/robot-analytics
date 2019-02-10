@@ -4,7 +4,7 @@ import { ColumnData, RowData } from '@robot-analytics/routes/TableView/data';
 import CustomTableToolbar from '@robot-analytics/routes/TableView/CustomTableToolbar';
 import { AutoSizer } from 'react-virtualized';
 import { includes, filter } from 'lodash';
-import { filterRows, parseSearchBar } from '@robot-analytics/routes/TableView/filtering';
+import { filterRows } from '@robot-analytics/routes/TableView/filtering';
 
 class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
     state: CustomTableState = {
@@ -93,7 +93,7 @@ class CustomTable extends React.Component<CustomTableProps, CustomTableState> {
                         {({ width, height }) => (
                             <CustomTableBody
                                 columns={filter(columns, c => !includes(filterOut, c))}
-                                rows={filterRows(rows, parseSearchBar(searchBarText))}
+                                rows={filterRows(rows)}
                                 sortBy={sortBy}
                                 sortDirection={sortDirection}
                                 rowHeight={56}
