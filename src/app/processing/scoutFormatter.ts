@@ -1,18 +1,17 @@
 import { Scouts } from '@robot-analytics/data/scout'
 import { RsData, toScoutMetricType } from '@robot-analytics/data/rsData';
 import { Teams } from '@robot-analytics/data/team';
-import { reduce, keys } from 'lodash';
+import { reduce } from 'lodash';
 import { store } from '@robot-analytics/state/store';
 import { Metrics } from '@robot-analytics/data/metric';
 
-// Convert RsTeams to Teams
+// Convert RsData to usable data
 export const processRsData = (rsData: RsData) => (
     reduce(rsData.teams, (data: { teams: Teams, metrics: Metrics }, rsTeam, rsTeamNumber) => {
         data.teams[parseInt(rsTeamNumber)] = {
-            // TODO: use real teamName, currently using teamNumber
             name: rsTeamNumber,
             scouts: reduce(rsTeam, (scouts: Scouts, rsScout) => {
-                if (rsScout.name != null) {
+                if (rsScout.name) {
                     scouts[rsScout.name] = {
                         metrics: reduce(rsScout.metrics, (metrics: Metrics, rsMetric) => {
                             if (!store.getState().hasOwnProperty(rsMetric.name)) {

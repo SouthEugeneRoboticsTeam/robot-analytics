@@ -114,7 +114,7 @@ interface CustomTableProps extends WithStyles<typeof styles> {
     rowHeight: number
     width: number
     height: number
-    sortBy: string
+    sortBy: string | null
     sortDirection: 'asc' | 'desc',
     onSort: (sortRequest: string | null) => void
 }

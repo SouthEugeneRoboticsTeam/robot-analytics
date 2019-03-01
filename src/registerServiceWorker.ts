@@ -7,15 +7,17 @@ export default function register() {
                 .then(registration => {
                     registration.onupdatefound = () => {
                         const installingWorker = registration.installing;
-                        installingWorker.onstatechange = () => {
-                            if (installingWorker.state === 'installed') {
-                                if (navigator.serviceWorker.controller) {
-                                    console.log('New content is available; please refresh.');
-                                } else {
-                                    console.log('Content is cached for offline use.');
+                        if (installingWorker) {
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed') {
+                                    if (navigator.serviceWorker.controller) {
+                                        console.log('New content is available; please refresh.');
+                                    } else {
+                                        console.log('Content is cached for offline use.');
+                                    }
                                 }
-                            }
-                        };
+                            };
+                        }
                     };
                 })
                 .catch(error => {

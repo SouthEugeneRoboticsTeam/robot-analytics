@@ -6,7 +6,7 @@ import { ActionTypes } from './actions';
 import { Metrics } from '@robot-analytics/data/metric';
 import { TeamTableState } from '@robot-analytics/state/state';
 import { ColumnData, RowData } from '@robot-analytics/routes/TableView/data';
-import { calculations } from '@robot-analytics/data/calculations';
+import { calculations, hasInput } from '@robot-analytics/data/calculations';
 import { forEach, keys, map, reduce } from 'lodash';
 
 const teams = (state: Teams = {}, action: ActionType<typeof actions>) => {
@@ -70,7 +70,7 @@ const teamTable = (
                     { name: 'Scout Count', noFilter: true },
                     ...reduce(action.payload.metrics, (acc: Array<ColumnData>, metric, metricName) => {
                         forEach(calculations, (calculation, calculationName) => {
-                            if (calculation.inputTypes.indexOf(metric.type) !== -1) {
+                            if (hasInput(calculation.typeMappings, metric.type)) {
                                 acc.push({ name: `[${metric.category}] ${metricName} (${calculationName})` })
                             }
                         });
@@ -82,7 +82,7 @@ const teamTable = (
                     'Scout Count': keys(team.scouts).length,
                     ...reduce(action.payload.metrics, (row: RowData, metric, metricName) => {
                         forEach(calculations, (calculation, calculationName) => {
-                            if (calculation.inputTypes.indexOf(metric.type) !== -1) {
+                            if (hasInput(calculation.typeMappings, metric.type)) {
                                 row[`[${metric.category}] ${metricName} (${calculationName})`] = calculation.invoke(
                                     ...map(team.scouts, scout => (
                                         scout.metrics[metricName]
@@ -101,7 +101,7 @@ const teamTable = (
                 filterOut: action.payload
             };
         }
-        default: return state
+        default: return state;
     }
 };
 
