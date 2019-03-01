@@ -39,7 +39,7 @@ export const calculations: Calculations = {
         }),
     },
     'Average': {
-        typeMappings: [[ScoutMetricType.NUMBER, ScoutMetricType.NUMBER]],
+        typeMappings: [[ScoutMetricType.NUMBER, ScoutMetricType.NUMBER], [ScoutMetricType.BOOLEAN, ScoutMetricType.NUMBER]],
         invoke: (...metrics: Array<Metric<number>>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(mean(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
@@ -48,14 +48,18 @@ export const calculations: Calculations = {
     },
     'Median': {
         typeMappings: [[ScoutMetricType.NUMBER, ScoutMetricType.NUMBER]],
-        invoke: (...metrics: Array<Metric<number>>) => ({
+        invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(median(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
             category: metrics[0].category,
         }),
     },
     'Mode': {
-        typeMappings: [[ScoutMetricType.NUMBER, ScoutMetricType.NUMBER], [ScoutMetricType.TEXT, ScoutMetricType.TEXT]],
+        typeMappings: [
+            [ScoutMetricType.NUMBER, ScoutMetricType.NUMBER],
+            [ScoutMetricType.TEXT, ScoutMetricType.TEXT],
+            [ScoutMetricType.BOOLEAN, ScoutMetricType.ENUM]
+        ],
         invoke: (...metrics: (Array<Metric>)) => ({
                 type: metrics[0].type === ScoutMetricType.NUMBER ? ScoutMetricType.NUMBER : ScoutMetricType.TEXT,
                 value: mode(
