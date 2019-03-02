@@ -19,10 +19,11 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 import { NavigationItem } from '@robot-analytics/routes/Main/NavigationItem';
-import { store } from '@robot-analytics/state/store'
-import { addData } from '@robot-analytics/state/actions';
-import { processRsData } from '@robot-analytics/processing/scoutFormatter';
 import { RouterProps } from 'react-router';
+import FileSelector from '@robot-analytics/util/FileSelector';
+import { processRsData } from '@robot-analytics/processing/scoutFormatter';
+import { addData } from '@robot-analytics/state/actions';
+import { store } from '@robot-analytics/state/store';
 
 const drawerWidth = 240;
 
@@ -114,15 +115,15 @@ export const Main = withStyles(styles)(
 
         handleDrawerClose = () => this.setState({ drawerOpened: false });
 
-        // TODO: find better way of using input element (low priority)
-        fileUploader: HTMLInputElement;
-        // Reads and parses the imported JSON file and adds it to the state
-        handleFileUpload = (event: any) => {
-            const reader = new FileReader();
-            reader.readAsText(event.target.files[0]);
-            reader.onload = (event: any) => {
-                store.dispatch(addData(processRsData(JSON.parse(event.target.result))));
-                this.props.history.replace('/table-view');
+        handleFileUpload = (files: FileList | null) => {
+            if (files !== null) {
+                const fileReader = new FileReader();
+                fileReader.onload = () => {
+                   if (typeof fileReader.result === 'string') {
+                       store.dispatch(addData(processRsData(JSON.parse(fileReader.result))))
+                   }
+                };
+                fileReader.readAsText(files[0])
             }
         };
 
@@ -172,18 +173,20 @@ export const Main = withStyles(styles)(
                             >
                                 Robot Analytics
                             </Typography>
-                            <input id="dataImport" type="file" accept='.json' ref={(ref) => this.fileUploader = ref} style={{display: 'none' }} onChange={this.handleFileUpload}/>
-                            <IconButton
-                            color="inherit"
-                            onClick={() => this.fileUploader.click()}>
-                                <CloudUpload />
-                            </IconButton>
+                            <FileSelector
+                                onLoadFile={this.handleFileUpload}
+                                component={
+                                    <IconButton color="inherit">
+                                        <CloudUpload />
+                                    </IconButton>
+                                }
+                            />
                         </Toolbar>
                     </AppBar>
                     <main className={classes.content}>
                         <div className={classes.appBarSpacer} />
                         <Switch>
-                            <Route exact path="/" component={Home(() => this.fileUploader.click())} />
+                            <Route exact path="/" component={Home(this.handleFileUpload)} />
                             <Route path="/table-view" component={TableView} />
                         </Switch>
                     </main>

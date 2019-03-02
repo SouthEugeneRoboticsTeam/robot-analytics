@@ -1,47 +1,53 @@
 import { Metric, ScoutMetricType } from '@robot-analytics/data/metric';
 import { max, mean, median, min, mode, round, std } from 'mathjs';
+import { forEach } from 'lodash';
 
 export type Calculations = {
     [name: string]: Calculation
 }
 
+export type TypeMapping = [ScoutMetricType, ScoutMetricType]
+
+export const hasInput = (mappings: Array<TypeMapping>, input: ScoutMetricType): boolean => {
+    let result = false;
+    forEach(mappings, mapping => {
+        if (mapping[0] === input) result = true
+    });
+    return result;
+};
+
 export interface Calculation<T = any> {
-    inputTypes: Array<ScoutMetricType>,
-    outputType: ScoutMetricType,
-    invoke: (...metrics: Array<Metric<T>>) => Metric
+    typeMappings: Array<TypeMapping>
+    invoke: (...metrics: Array<Metric<T>>)  => Metric
 }
 
 export const calculations: Calculations = {
     'Maximum': {
-        inputTypes: [ScoutMetricType.NUMBER],
-        outputType: ScoutMetricType.NUMBER,
-        invoke: (...metrics: Array<Metric>) => ({
+        typeMappings: [[ScoutMetricType.NUMBER, ScoutMetricType.NUMBER]],
+        invoke: (...metrics: Array<Metric<number>>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(max(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
             category: metrics[0].category,
         })
     },
     'Minimum': {
-        inputTypes: [ScoutMetricType.NUMBER],
-        outputType: ScoutMetricType.NUMBER,
-        invoke: (...metrics: Array<Metric>) => ({
+        typeMappings: [[ScoutMetricType.NUMBER, ScoutMetricType.NUMBER]],
+        invoke: (...metrics: Array<Metric<number>>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(min(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
             category: metrics[0].category,
         }),
     },
     'Average': {
-        inputTypes: [ScoutMetricType.NUMBER, ScoutMetricType.BOOLEAN],
-        outputType: ScoutMetricType.NUMBER,
-        invoke: (...metrics: Array<Metric>) => ({
+        typeMappings: [[ScoutMetricType.NUMBER, ScoutMetricType.NUMBER], [ScoutMetricType.BOOLEAN, ScoutMetricType.NUMBER]],
+        invoke: (...metrics: Array<Metric<number>>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(mean(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
             category: metrics[0].category,
         }),
     },
     'Median': {
-        inputTypes: [ScoutMetricType.NUMBER],
-        outputType: ScoutMetricType.NUMBER,
+        typeMappings: [[ScoutMetricType.NUMBER, ScoutMetricType.NUMBER]],
         invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(median(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
@@ -49,23 +55,21 @@ export const calculations: Calculations = {
         }),
     },
     'Mode': {
-        inputTypes: [ScoutMetricType.NUMBER, ScoutMetricType.TEXT],
-        outputType: ScoutMetricType.NUMBER,
-        invoke: (...metrics: Array<Metric>) => (
-            metrics[0].type === ScoutMetricType.NUMBER ? {
-                    type: ScoutMetricType.NUMBER,
-                    value: mode(metrics.filter((metric) => !!metric).map((metric) => metric.value)).join(', '),
-                    category: metrics[0].category,
-            } : metrics[0].type === ScoutMetricType.TEXT ? {
-                type: ScoutMetricType.TEXT,
-                value: mode(metrics.filter((metric) => !!metric).map((metric) => metric.value)).join(', '),
-                category: metrics[0].category,
-            } : null
-        ),
+        typeMappings: [
+            [ScoutMetricType.NUMBER, ScoutMetricType.NUMBER],
+            [ScoutMetricType.TEXT, ScoutMetricType.TEXT],
+            [ScoutMetricType.BOOLEAN, ScoutMetricType.ENUM]
+        ],
+        invoke: (...metrics: (Array<Metric>)) => ({
+                type: metrics[0].type === ScoutMetricType.NUMBER ? ScoutMetricType.NUMBER : ScoutMetricType.TEXT,
+                value: mode(
+                    metrics.filter((metric: Metric) => !!metric).map((metric: Metric) => metric.value)
+                ).join(","),
+                category: metrics[0].category
+        }),
     },
     'Standard Deviation': {
-        inputTypes: [ScoutMetricType.NUMBER],
-        outputType: ScoutMetricType.NUMBER,
+        typeMappings: [[ScoutMetricType.NUMBER, ScoutMetricType.NUMBER]],
         invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(std(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
