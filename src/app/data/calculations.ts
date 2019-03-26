@@ -64,7 +64,7 @@ export const calculations: Calculations = {
                 type: metrics[0].type === ScoutMetricType.NUMBER ? ScoutMetricType.NUMBER : ScoutMetricType.TEXT,
                 value: mode(
                     metrics.filter((metric: Metric) => !!metric).map((metric: Metric) => metric.value)
-                ).join(","),
+                ).map((value) => value.toString().trim()).join(", "),
                 category: metrics[0].category
         }),
     },
