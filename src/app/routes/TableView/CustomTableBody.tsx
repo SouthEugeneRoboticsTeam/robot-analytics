@@ -29,10 +29,16 @@ const styles = (theme: Theme) => createStyles({
         borderBottom: '1px solid grey'
     },
     bottomLeftGrid: {
-        borderRight: '1px solid grey'
+        borderRight: '1px solid grey',
+        '&::-webkit-scrollbar': {
+            display: 'none'
+        }
     },
     topRightGrid: {
-        borderBottom: '1px solid grey'
+        borderBottom: '1px solid grey',
+        '&::-webkit-scrollbar': {
+            display: 'none'
+        }
     },
     flexContainer: {
         display: 'flex',
@@ -103,6 +109,8 @@ const CustomTableBody = ({
             sortDirection={sortDirection}
             overscanColumnCount={3}
             overscanRowCount={5}
+            enableFixedColumnScroll
+            enableFixedRowScroll
         />
     )
 };
