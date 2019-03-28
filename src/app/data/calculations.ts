@@ -1,6 +1,6 @@
 import { Metric, ScoutMetricType } from '@robot-analytics/data/metric';
 import { max, mean, median, min, mode, round, std } from 'mathjs';
-import { forEach } from 'lodash';
+import { forEach, map } from 'lodash';
 
 export type Calculations = {
     [name: string]: Calculation
@@ -62,9 +62,9 @@ export const calculations: Calculations = {
         ],
         invoke: (...metrics: (Array<Metric>)) => ({
                 type: metrics[0].type === ScoutMetricType.NUMBER ? ScoutMetricType.NUMBER : ScoutMetricType.TEXT,
-                value: mode(
+                value: map(mode(
                     metrics.filter((metric: Metric) => !!metric).map((metric: Metric) => metric.value)
-                ).join(","),
+                ), value => (typeof value === 'string' ? value.trim() : value)).join(', '),
                 category: metrics[0].category
         }),
     },
