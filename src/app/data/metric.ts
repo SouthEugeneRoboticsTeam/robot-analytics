@@ -2,9 +2,9 @@ export interface Metrics {
     [name: string]: Metric
 }
 
-export interface Metric<T = any> {
+export interface Metric {
     type: ScoutMetricType
-    value: T
+    value: any
     category: string
 }
 
@@ -16,23 +16,23 @@ export enum ScoutMetricType {
     ENUM = "enum",
 }
 
-export interface TextMetric extends Metric<string> {
+export interface TextMetric extends Metric {
     type: ScoutMetricType.TEXT
 }
 
-export interface NumberMetric extends Metric<number> {
+export interface NumberMetric extends Metric {
     type: ScoutMetricType.NUMBER
 }
 
-export interface NumberArrayMetric extends Metric<Array<number>> {
+export interface NumberArrayMetric extends Metric {
     type: ScoutMetricType.NUMBER_ARRAY
 }
 
-export interface BooleanMetric extends Metric<boolean> {
+export interface BooleanMetric extends Metric {
     type: ScoutMetricType.BOOLEAN
 }
 
-export interface EnumMetric extends Metric<string> {
+export interface EnumMetric extends Metric {
     type: ScoutMetricType.TEXT
 }
 
