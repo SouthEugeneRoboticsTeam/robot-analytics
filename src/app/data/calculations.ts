@@ -16,15 +16,15 @@ export const hasInput = (mappings: Array<TypeMapping>, input: ScoutMetricType): 
     return result;
 };
 
-export interface Calculation<T = any> {
+export interface Calculation {
     typeMappings: Array<TypeMapping>
-    invoke: (...metrics: Array<Metric<T>>)  => Metric
+    invoke: (...metrics: Array<Metric>)  => Metric
 }
 
 export const calculations: Calculations = {
     'Maximum': {
         typeMappings: [[ScoutMetricType.NUMBER, ScoutMetricType.NUMBER]],
-        invoke: (...metrics: Array<Metric<number>>) => ({
+        invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(max(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
             category: metrics[0].category,
@@ -32,7 +32,7 @@ export const calculations: Calculations = {
     },
     'Minimum': {
         typeMappings: [[ScoutMetricType.NUMBER, ScoutMetricType.NUMBER]],
-        invoke: (...metrics: Array<Metric<number>>) => ({
+        invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(min(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
             category: metrics[0].category,
@@ -40,7 +40,7 @@ export const calculations: Calculations = {
     },
     'Average': {
         typeMappings: [[ScoutMetricType.NUMBER, ScoutMetricType.NUMBER], [ScoutMetricType.BOOLEAN, ScoutMetricType.NUMBER]],
-        invoke: (...metrics: Array<Metric<number>>) => ({
+        invoke: (...metrics: Array<Metric>) => ({
             type: ScoutMetricType.NUMBER,
             value: round(mean(metrics.filter((metric) => !!metric).map((metric) => metric.value)), 2),
             category: metrics[0].category,
