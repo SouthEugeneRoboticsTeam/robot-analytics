@@ -9,11 +9,11 @@ export interface Metric {
 }
 
 export enum ScoutMetricType {
-    TEXT = "text",
-    NUMBER = "number",
-    NUMBER_ARRAY = "numberArray",
-    BOOLEAN = "boolean",
-    ENUM = "enum",
+    TEXT = 'text',
+    NUMBER = 'number',
+    NUMBER_ARRAY = 'numberArray',
+    BOOLEAN = 'boolean',
+    ENUM = 'enum',
 }
 
 export interface TextMetric extends Metric {
